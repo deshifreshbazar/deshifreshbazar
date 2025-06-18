@@ -32,10 +32,20 @@ export default function ContactPage() {
                         </ul>
 
                         <h2 className="mt-8 text-xl font-semibold">অভিযোগ ও পরামর্শ</h2>
-                        <p>আপনার কোন অভিযোগ বা পরামর্শ থাকলে আমাদের ইমেইল করুন: complaints@deshifreshbazar.com</p>
+                        <p>আপনার কোন অভিযোগ বা পরামর্শ থাকলে আমাদের ইমেইল করুন: <a href="mailto:deshifreshbazar@gmail.com" className="text-blue-600 hover:text-blue-800">deshifreshbazar@gmail.com</a></p>
 
                         <h2 className="mt-8 text-xl font-semibold">সামাজিক যোগাযোগ মাধ্যম</h2>
                         <ul className="list-disc pl-6">
+                            <li>
+                                <a href="https://api.whatsapp.com/send/?phone=8801560001192" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                                    হোয়াটসঅ্যাপ: +৮৮০১৫৬০০০১১৯২
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.facebook.com/deshifreshbazar" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                                    ফেসবুক: deshifreshbazar
+                                </a>
+                            </li>
                             <li>
                                 <a href="https://www.instagram.com/deshi_fresh_bazar" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                                     ইনস্টাগ্রাম: deshi_fresh_bazar
@@ -46,15 +56,11 @@ export default function ContactPage() {
                                     টিকটক: deshi.fresh.bazar
                                 </a>
                             </li>
-                            <li>
-                                <a href="https://api.whatsapp.com/send/?phone=8801560001192" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                                    হোয়াটসঅ্যাপ: +৮৮০১৫৬০০০১১৯২
-                                </a>
-                            </li>
+
                         </ul>
                         <h2 className="mt-8 text-xl font-semibold">ডেলিভারি এলাকা: বাংলাদেশ</h2>
                         <p>আমাদের পণ্য/সেবা বর্তমানে বাংলাদেশের যেকোনো স্থানে ডেলিভারি সুবিধা সহ উপলব্ধ। আপনি দেশের যেকোনো প্রান্তে অবস্থান করলেও আমরা আপনাকে সময়মতো ও নিরাপদভাবে পণ্য পৌঁছে দেবার নিশ্চয়তা দিচ্ছি।</p>
-                        
+
                         <ul className="list-none space-y-1 mt-4">
                             <li className="flex items-center">
                                 <span className="text-green-600 mr-2">✅</span>

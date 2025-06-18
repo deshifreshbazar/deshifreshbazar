@@ -40,9 +40,9 @@ interface ProductClientProps {
 
 export default function ProductClient({ product, products }: ProductClientProps) {
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
+  const { addItem, items: cartItems } = useCart();
   const router = useRouter();
-  
+
   // Initialize with null, will update after product check
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 
@@ -76,15 +76,18 @@ export default function ProductClient({ product, products }: ProductClientProps)
   };
 
   const handleBuyNow = () => {
-    if (product.stock <= 0) {
-      toast.error("This product is currently out of stock");
-      return;
+    const existingCartItem = cartItems.find(item => 
+      item.id === product.id && item.selectedPackage === selectedPackage?.id
+    );
+
+    if (!existingCartItem) {
+      // @ts-expect-error - handling type mismatch with the CartContext
+      addItem(product, quantity, selectedPackage?.id);
+      toast.success("Added to cart successfully");
     }
-    // @ts-expect-error - handling type mismatch with the CartContext
-    addItem(product, quantity, selectedPackage?.id);
-    toast.success("Added to cart successfully");
+    
     router.push("/cart");
-  };
+  }
 
   return (
     <div className="bg-gray-50 py-8">
@@ -130,7 +133,7 @@ export default function ProductClient({ product, products }: ProductClientProps)
               product?.details && (
                 <div className="mt-6">
                   <h3 className="text-lg font-medium">Details</h3>
-                  <div 
+                  <div
                     className="mt-2 rich-text-content"
                     dangerouslySetInnerHTML={{ __html: product.details }}
                   />
@@ -147,11 +150,10 @@ export default function ProductClient({ product, products }: ProductClientProps)
                       <button
                         key={pkg.id}
                         onClick={() => setSelectedPackage(pkg)}
-                        className={`px-3 py-1 rounded text-sm ${
-                          selectedPackage?.id === pkg.id
+                        className={`px-3 py-1 rounded text-sm ${selectedPackage?.id === pkg.id
                             ? 'bg-green-700 text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         {pkg.name} - ৳{pkg.price}
                       </button>
@@ -190,8 +192,8 @@ export default function ProductClient({ product, products }: ProductClientProps)
                 >
                   {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white sm:w-auto"
                   onClick={handleBuyNow}
                   disabled={product.stock <= 0}

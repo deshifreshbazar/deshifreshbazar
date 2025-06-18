@@ -160,7 +160,14 @@ export default function CheckoutPage() {
                               <FormItem>
                                 <FormLabel>Full Name <span className="text-red-500">*</span></FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Your name" required {...field} />
+                                  <Input placeholder="Your name" required {...field} 
+                                     onChange={e => {
+                                      // Remove any digits from the input
+                                      const value = e.target.value.replace(/\d+/g, '');
+                                      field.onChange(value);
+                                    }}
+                                    value={field.value?.replace(/\d+/g, '') || ''}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -224,7 +231,7 @@ export default function CheckoutPage() {
                                   <FormLabel>Address <span className="text-red-500">*</span></FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder="House #123, Road #10"
+                                      placeholder="House #10, Floor #4,  Road #10"
                                       required
                                       {...field}
                                     />
@@ -244,7 +251,14 @@ export default function CheckoutPage() {
                                   <Input
                                     placeholder="Dhaka"
                                     required
+                                    maxLength={10}
                                     {...field}
+                                    onChange={e => {
+                                      // Remove any digits from the input
+                                      const value = e.target.value.replace(/\d+/g, '');
+                                      field.onChange(value);
+                                    }}
+                                    value={field.value?.replace(/\d+/g, '') || ''}
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -256,43 +270,27 @@ export default function CheckoutPage() {
                             name="postalCode"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Postal Code <span className="text-red-500">*</span></FormLabel>
+                                <FormLabel>Upazila <span className="text-red-500">*</span></FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="1207"
-                                    type="number"
-                                    maxLength={4}
+                                    placeholder="Dhaka"
+                                    type="text"
+                                    maxLength={10}
                                     required
                                     {...field}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(/[^0-9]/g, '');
-                                      if (value.length <= 4) {
-                                        field.onChange(value);
-                                      }
+                                    onChange={e => {
+                                      // Remove any digits from the input
+                                      const value = e.target.value.replace(/\d+/g, '');
+                                      field.onChange(value);
                                     }}
+                                    value={field.value?.replace(/\d+/g, '') || ''}
                                   />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                          {/* <FormField
-                            control={form.control}
-                            name="country"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Country</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Bangladesh"
-                                    disabled
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          /> */}
+                    
                         </div>
                       </div>
 

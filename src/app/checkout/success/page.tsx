@@ -180,7 +180,7 @@ function OrderDetails() {
                 <p className="font-medium text-right">{formData.address}</p>
               </div>
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-                <label className="text-sm font-medium text-muted-foreground">City & Postal Code</label>
+                <label className="text-sm font-medium text-muted-foreground">City & Upazila</label>
                 <p className="font-medium text-right">{formData.city}, {formData.postalCode}</p>
               </div>
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
