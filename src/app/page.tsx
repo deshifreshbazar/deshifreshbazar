@@ -36,6 +36,7 @@ type Product = {
   image: string
   rating?: number
   discount?: number
+  sequence: number
 }
 
 // Memoized feature carousel component
@@ -173,7 +174,10 @@ export default function HomePage() {
       const response = await fetch("/api/products")
       if (!response.ok) throw new Error("Failed to fetch products")
       const data = await response.json()
-      setFeaturedProducts(data.slice(0, 8)) // Get first 8 products
+      if (!Array.isArray(data)) throw new Error("Invalid data format received")
+      // Sort products by sequence before slicing
+      const sortedProducts = [...data].sort((a, b) => a.sequence - b.sequence)
+      setFeaturedProducts(sortedProducts.slice(0, 8)) // Get first 8 products
     } catch (error) {
       console.error("Error fetching products:", error)
     } finally {
@@ -371,7 +375,7 @@ export default function HomePage() {
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">আমরা কেন আলাদা?</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              আমাদের অনন্য পদ্ধতি এবং প্রতিশ্রুতি যা আমাদের অন্যদের থেকে আলাদা করে
+            আমাদের ভিন্নধর্মী পদ্ধতি ও নিরবচ্ছিন্ন প্রতিশ্রুতি—এটাই আমাদেরকে অন্যদের থেকে আলাদা করে তোলে।
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full" />
           </div>
