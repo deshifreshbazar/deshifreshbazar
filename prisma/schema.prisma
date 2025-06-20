@@ -37,6 +37,8 @@ model Product {
   cartItems   CartItem[]
   orderItems  OrderItem[]
   packages    Package[]
+
+  @@index([sequence])
 }
 
 model Category {

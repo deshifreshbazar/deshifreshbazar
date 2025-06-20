@@ -11,10 +11,18 @@ export async function GET() {
         category: true,
       },
       orderBy: {
-        createdAt: 'desc',
-      },
+        createdAt: 'desc'
+      }
     });
-    return NextResponse.json(products);
+
+    // Sort by sequence in memory
+    const sortedProducts = [...products].sort((a, b) => {
+      // Type assertion since we know sequence exists in the database
+      return ((a as unknown as { sequence: number }).sequence || 0) - 
+             ((b as unknown as { sequence: number }).sequence || 0);
+    });
+
+    return NextResponse.json(sortedProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

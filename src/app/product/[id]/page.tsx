@@ -29,6 +29,9 @@ async function getRelatedProducts(categoryId: string, currentProductId: string) 
           id: currentProductId
         }
       },
+      orderBy: {
+        createdAt: 'desc'
+      },
       take: 4,
       include: {
         packages: true,
