@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         shippingPostalCode: postalCode,
         shippingCountry: country,
         subtotal: subtotal,
-        shippingCost: shipping,
+        shippingCost: shipping || 0,
         totalAmount: total,
         paymentMethod: paymentMethod,
         status: 'PENDING',

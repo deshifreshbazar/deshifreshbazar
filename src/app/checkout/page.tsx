@@ -67,14 +67,14 @@ export default function CheckoutPage() {
     return getCartTotal();
   };
 
-  const calculateShipping = () => {
-    const subtotal = calculateSubtotal();
-    if (subtotal === 0) return 0;
-    return subtotal > 5000 ? 0 : 100;
-  };
+  // const calculateShipping = () => {
+  //   const subtotal = calculateSubtotal();
+  //   if (subtotal === 0) return 0;
+  //   return subtotal > 5000 ? 0 : 100;
+  // };
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShipping();
+    return calculateSubtotal();
   };
 
   const onSubmit = async (data: OrderFormData) => {
@@ -93,7 +93,8 @@ export default function CheckoutPage() {
           selectedPackage: item.selectedPackage,
         })),
         subtotal: calculateSubtotal(),
-        shipping: calculateShipping(),
+        // shipping: calculateShipping(),
+        shipping: 0,
         total: calculateTotal(),
         paymentMethod,
       };
@@ -376,14 +377,14 @@ export default function CheckoutPage() {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>৳ {calculateSubtotal()}</span>
                     </div>
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
                       <span>
                         {calculateShipping() === 0
                           ? "Free"
                           : `৳ ${calculateShipping()}`}
                       </span>
-                    </div>
+                    </div> */}
                     <div className="border-t pt-2 flex justify-between font-semibold">
                       <span>Total</span>
                       <span>৳ {calculateTotal()}</span>

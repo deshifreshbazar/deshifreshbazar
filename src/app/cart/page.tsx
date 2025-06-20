@@ -20,14 +20,14 @@ export default function CartPage() {
     clearCart 
   } = useCart();
 
-  const calculateShipping = () => {
-    const subtotal = getCartTotal();
-    if (subtotal === 0) return 0;
-    return subtotal > 5000 ? 0 : 100;
-  };
+  // const calculateShipping = () => {
+  //   const subtotal = getCartTotal();
+  //   if (subtotal === 0) return 0;
+  //   return subtotal > 5000 ? 0 : 100;
+  // };
 
   const calculateTotal = () => {
-    return getCartTotal() + calculateShipping();
+    return getCartTotal();
   };
 
   return (
@@ -82,18 +82,18 @@ export default function CartPage() {
                               {item.name}
                             </Link>
                             <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                            <div className="mt-2 flex gap-2">
+                            <div className="mt-2 space-y-2">
                               {item.packages.map(pkg => (
                                 <button
                                   key={pkg.id}
                                   onClick={() => updatePackage(item.id, pkg.id)}
-                                  className={`px-3 py-1 rounded text-sm ${
+                                  className={`w-full px-4 py-2 rounded-lg border text-left ${
                                     item.selectedPackage === pkg.id 
-                                      ? 'bg-green-700 text-white' 
-                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                      ? 'border-green-700 bg-green-50 text-green-700' 
+                                      : 'border-gray-200 hover:border-green-700 hover:bg-green-50'
                                   }`}
                                 >
-                                  {pkg.name} - ৳{pkg.price}
+                                  {pkg.name} (৳ {pkg.price})
                                 </button>
                               ))}
                             </div>
@@ -153,14 +153,14 @@ export default function CartPage() {
                         <span className="text-muted-foreground">Subtotal</span>
                         <span>৳{getCartTotal()}</span>
                       </div>
-                      <div className="flex justify-between">
+                      {/* <div className="flex justify-between">
                         <span className="text-muted-foreground">Shipping</span>
                         <span>
                           {calculateShipping() === 0
                             ? "Free"
                             : `৳${calculateShipping()}`}
                         </span>
-                      </div>
+                      </div> */}
                       <div className="border-t pt-3 flex justify-between font-semibold">
                         <span>Total</span>
                         <span>৳{calculateTotal()}</span>

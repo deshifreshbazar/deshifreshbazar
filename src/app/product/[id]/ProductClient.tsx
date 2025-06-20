@@ -90,7 +90,7 @@ export default function ProductClient({ product, products }: ProductClientProps)
   }
 
   return (
-    <div className="bg-gray-50 py-8">
+    <div className="bg-gray-50 py-4">
       <div className="container">
         {/* Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
@@ -106,32 +106,33 @@ export default function ProductClient({ product, products }: ProductClientProps)
         </div>
 
         {/* Product details */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-[1400px] mx-auto">
           {/* Product image */}
-          <div className="space-y-4">
-            <div className="overflow-hidden rounded-lg bg-white">
+          <div className="space-y-4 md:pl-0">
+            <div className="overflow-hidden rounded-lg bg-white md:h-[600px]">
               <Image
                 src={product.image}
                 alt={product.name}
-                width={500}
-                height={500}
-                className="h-[450px] w-full object-cover"
+                width={800}
+                height={800}
+                className="w-full h-full object-cover"
+                priority
               />
             </div>
           </div>
 
           {/* Product info */}
-          <div>
+          <div className="md:pl-8">
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <p className="mt-2 text-2xl font-semibold text-green-700">৳{product.price}</p>
-            <div className="mt-6">
+            <div className="mt-4">
               <h3 className="text-lg font-medium">Description</h3>
               <p className="mt-2 text-muted-foreground">{product.description}</p>
             </div>
 
             {
               product?.details && (
-                <div className="mt-6">
+                <div className="mt-4">
                   <h3 className="text-lg font-medium">Details</h3>
                   <div
                     className="mt-2 rich-text-content"
@@ -141,21 +142,24 @@ export default function ProductClient({ product, products }: ProductClientProps)
               )
             }
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-4 space-y-3">
               {hasPackages && (
-                <div className="flex items-center gap-4">
-                  <span>Package:</span>
-                  <div className="flex gap-2">
+                <div>
+                  <span className="text-lg font-medium">Select Package:</span>
+                  <div className="mt-2 space-y-2">
                     {product.packages.map(pkg => (
                       <button
                         key={pkg.id}
                         onClick={() => setSelectedPackage(pkg)}
-                        className={`px-3 py-1 rounded text-sm ${selectedPackage?.id === pkg.id
-                            ? 'bg-green-700 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        className={`w-full px-5 py-1 rounded-lg border text-left
+                          md:max-w-[320px] md:px-4
+                          ${
+                            selectedPackage?.id === pkg.id
+                              ? 'border-green-700 bg-green-50 text-green-700'
+                              : 'border-gray-200 hover:border-green-700 hover:bg-green-50'
                           }`}
                       >
-                        {pkg.name} - ৳{pkg.price}
+                        {pkg.name} (৳ {pkg.price})
                       </button>
                     ))}
                   </div>
