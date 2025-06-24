@@ -20,6 +20,46 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Validation functions
+  const validateName = (name: string) => {
+    if (!name || name.trim().length < 3) {
+      return "Name must be at least 3 characters long.";
+    }
+    return "";
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email.";
+    }
+    return "";
+  };
+
+  const validatePassword = (password: string) => {
+    const length = password.length >= 8;
+    const letter = /[A-Za-z]/.test(password);
+    const number = /[0-9]/.test(password);
+    const special = /[^A-Za-z0-9]/.test(password);
+    if (!length || !letter || !number || !special) {
+      return "Password must be at least 8 characters long, contain at least one letter, one number, and one special character.";
+    }
+    return "";
+  };
+
+  const validateConfirmPassword = (password: string, confirmPassword: string) => {
+    if (password !== confirmPassword) {
+      return "Passwords do not match.";
+    }
+    return "";
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,6 +67,13 @@ export default function RegisterPage() {
       ...prev,
       [name]: value,
     }));
+    // Validate on change
+    let error = "";
+    if (name === "name") error = validateName(value);
+    if (name === "email") error = validateEmail(value);
+    if (name === "password") error = validatePassword(value);
+    if (name === "confirmPassword") error = validateConfirmPassword(formData.password, value);
+    setFormErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,8 +81,18 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    // Validate all fields
+    const nameError = validateName(formData.name);
+    const emailError = validateEmail(formData.email);
+    const passwordError = validatePassword(formData.password);
+    const confirmPasswordError = validateConfirmPassword(formData.password, formData.confirmPassword);
+    setFormErrors({
+      name: nameError,
+      email: emailError,
+      password: passwordError,
+      confirmPassword: confirmPasswordError,
+    });
+    if (nameError || emailError || passwordError || confirmPasswordError) {
       setLoading(false);
       return;
     }
@@ -47,10 +104,8 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
       });
-
-      // Redirect to home page after successful registration
       router.push("/");
-      router.refresh(); // Refresh the page to update auth state
+      router.refresh();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
       setError(errorMessage);
@@ -82,11 +137,14 @@ export default function RegisterPage() {
                   <Input
                     id="name"
                     name="name"
-                    placeholder="John Doe"
+                    placeholder="Your name"
                     value={formData.name}
                     onChange={handleChange}
                     required
                   />
+                  {formErrors.name && (
+                    <p className="text-sm text-red-600">{formErrors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -99,6 +157,9 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     required
                   />
+                  {formErrors.email && (
+                    <p className="text-sm text-red-600">{formErrors.email}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
@@ -111,6 +172,15 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     required
                   />
+                  {formErrors.password && (
+                    <div className="text-sm text-red-600">
+                      Password must:<br />
+                      - Be at least 8 characters long<br />
+                      - Contain at least one letter.<br />
+                      - Contain at least one number.<br />
+                      - Contain at least one special character.<br />
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -123,6 +193,9 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     required
                   />
+                  {formErrors.confirmPassword && (
+                    <p className="text-sm text-red-600">{formErrors.confirmPassword}</p>
+                  )}
                 </div>
                 <Button
                   type="submit"
