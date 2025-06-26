@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         paymentMethod: paymentMethod,
         status: 'PENDING',
         items: {
-          create: items.map((item: any) => ({
+          create: items.map((item: OrderItem) => ({
             productId: item.id,
             productName: item.name,
             productImage: item.image,

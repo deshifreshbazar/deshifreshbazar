@@ -50,17 +50,53 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
+  // Refactored cart load/save logic and validation
+
+  // Helper to migrate/validate a single cart item
+  const migrateCartItem = (item: CartItem): CartItem => ({
+    id: typeof item?.id === 'string' ? item.id : '',
+    name: typeof item?.name === 'string' ? item.name : '',
+    description: typeof item?.description === 'string' ? item.description : '',
+    price: typeof item?.price === 'number' ? item.price : 0,
+    quantity: typeof item?.quantity === 'number' ? item.quantity : 1,
+    image: typeof item?.image === 'string' ? item.image : '',
+    category: typeof item?.category === 'string' ? item.category : '',
+    packages: Array.isArray(item?.packages) ? item.packages : [],
+    selectedPackage: typeof item?.selectedPackage === 'string' ? item.selectedPackage : '',
+    totalPrice: typeof item?.totalPrice === 'number' ? item.totalPrice : 0,
+  });
+
+  // Validate a cart item
+  const validateCartItem = (item: CartItem): item is CartItem => (
+    item &&
+    typeof item.id === 'string' &&
+    typeof item.name === 'string' &&
+    typeof item.description === 'string' &&
+    typeof item.price === 'number' &&
+    typeof item.quantity === 'number' &&
+    typeof item.image === 'string' &&
+    typeof item.category === 'string' &&
+    Array.isArray(item.packages) &&
+    typeof item.selectedPackage === 'string' &&
+    typeof item.totalPrice === 'number'
+  );
+
+  // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem('cart');
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        if (Array.isArray(parsedCart) && parsedCart.every(validateCartItem)) {
-          setItems(parsedCart);
-        } else {
-          console.error('Invalid cart data structure');
-          localStorage.removeItem('cart');
-        }
+      if (!savedCart) return;
+
+      const parsedCart = JSON.parse(savedCart);
+      if (!Array.isArray(parsedCart)) {
+        throw new Error('Invalid cart data structure');
+      }
+
+      const migratedCart = parsedCart.map(migrateCartItem);
+      if (migratedCart.every(validateCartItem)) {
+        setItems(migratedCart);
+      } else {
+        throw new Error('Invalid cart item(s) in cart');
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -68,6 +104,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Save cart to localStorage whenever items change
   useEffect(() => {
     try {
       localStorage.setItem('cart', JSON.stringify(items));
@@ -75,22 +112,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Error saving cart:', error);
     }
   }, [items]);
-
-  const validateCartItem = (item: any): item is CartItem => {
-    return (
-      typeof item === 'object' &&
-      typeof item.id === 'string' &&
-      typeof item.name === 'string' &&
-      typeof item.description === 'string' &&
-      typeof item.price === 'number' &&
-      typeof item.quantity === 'number' &&
-      typeof item.image === 'string' &&
-      typeof item.category === 'string' &&
-      Array.isArray(item.packages) &&
-      typeof item.selectedPackage === 'string' &&
-      typeof item.totalPrice === 'number'
-    );
-  };
 
   const getItemPrice = (item: CartItem) => {
     const selectedPkg = item.packages.find(pkg => pkg.id === item.selectedPackage);

@@ -9,8 +9,13 @@ import Footer from '@/components/layout/Footer';
 interface OrderItem {
   id: string;
   productId: string;
+  productName?: string;
+  productImage?: string;
   quantity: number;
-  price: number;
+  unitPrice?: number;
+  price?: number;
+  totalPrice?: number;
+  packageType?: string;
 }
 
 interface Order {
@@ -78,6 +83,7 @@ export default function OrdersPage() {
     );
   }
 
+  
   return (
     <>
       <Header />
@@ -111,11 +117,22 @@ export default function OrdersPage() {
                       <span className="font-medium">Items:</span>
                       <div className="mt-2 space-y-2">
                         {order.items.map((item) => (
-                          <div key={item.id} className="flex justify-between">
-                            <span>Product #{item.productId}</span>
-                            <span>
-                              {item.quantity} x ${item.price.toFixed(2)}
-                            </span>
+                          <div key={item.id} className="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
+                            <div className="flex items-center gap-3">
+                              {item.productImage && (
+                                <img src={item.productImage} alt={item.productName || `Product ${item.productId}`} className="w-12 h-12 object-cover rounded" />
+                              )}
+                              <div>
+                                <div className="font-medium">{item.productName || `Product #${item.productId}`}</div>
+                                {item.packageType && <div className="text-xs text-gray-500">Package: {item.packageType}</div>}
+                              </div>
+                            </div>
+                            <div className="text-right mt-2 md:mt-0">
+                              <div>{item.quantity} x ${item.unitPrice?.toFixed(2) ?? item.price?.toFixed(2) ?? '0.00'}</div>
+                              {item.totalPrice !== undefined && (
+                                <div className="text-xs text-gray-500">Total: ${item.totalPrice.toFixed(2)}</div>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>

@@ -12,6 +12,7 @@ import { ArrowRight, Star, Truck, Shield, Award, Phone } from "lucide-react"
 import { FaFacebookMessenger } from 'react-icons/fa'
 import { useState, useEffect, useCallback, useMemo } from "react"
 import HeroSlider from "@/components/HeroSlider"
+import YouTubeVideo from "@/components/YouTubeVideo"
 
 import garden from "@/assets/images/farmar.jpg"
 import product from "@/assets/images/gobindovog-mango.jpg"
@@ -383,17 +384,13 @@ export default function HomePage() {
           {/* Intro Video */}
           <div className="mb-20">
             <Card className="overflow-hidden shadow-2xl border-0 bg-gradient-to-br from-green-50 to-white">
-              <div className="aspect-video relative group">
-                <iframe
-                  src="https://www.youtube.com/embed/j2hduSXuU8o?autoplay=1&mute=0&enablejsapi=1&rel=0&modestbranding=1"
-                  title="Welcome to Deshi Fresh Bazar"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                  loading="lazy"
-                  id="intro-video"
-                />
-              </div>
+              <YouTubeVideo
+                videoId="j2hduSXuU8o"
+                title="Welcome to Deshi Fresh Bazar"
+                className="group"
+                autoPlay={false}
+                mute={false}
+              />
             </Card>
           </div>
 
@@ -470,17 +467,13 @@ export default function HomePage() {
                 key={index}
                 className="group overflow-hidden shadow-xl border-0 hover:shadow-2xl transition-all duration-500"
               >
-                <div className="aspect-video relative overflow-hidden">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.videoId}?autoplay=0&mute=0&enablejsapi=1&rel=0&modestbranding=1`}
-                    title={video.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 w-full h-full"
-                    loading="lazy"
-                    id={`video-${index}`}
-                  />
-                </div>
+                <YouTubeVideo
+                  videoId={video.videoId}
+                  title={video.title}
+                  className=""
+                  autoPlay={false}
+                  mute={false}
+                />
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-green-600 transition-colors">
                     {video.title}
@@ -490,43 +483,6 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
-
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                document.addEventListener('DOMContentLoaded', function() {
-                  // Create Intersection Observer
-                  const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                      const iframe = entry.target;
-                      
-                      // When video comes into view
-                      if (entry.isIntersecting) {
-                        // Get the current src
-                        const currentSrc = new URL(iframe.src);
-                        
-                        // Add or update autoplay parameter
-                        currentSrc.searchParams.set('autoplay', '1');
-                        
-                        // Update the iframe src
-                        iframe.src = currentSrc.toString();
-                      } else {
-                        // When video goes out of view, pause it
-                        const currentSrc = new URL(iframe.src);
-                        currentSrc.searchParams.set('autoplay', '0');
-                        iframe.src = currentSrc.toString();
-                      }
-                    });
-                  }, { threshold: 0.5 });
-
-                  // Observe all video iframes
-                  document.querySelectorAll('iframe[src*="youtube.com"]').forEach(iframe => {
-                    observer.observe(iframe);
-                  });
-                });
-              `,
-            }}
-          />
 
           <div className="text-center">
             <p className="text-gray-600 mb-6 text-lg">আপনার অর্ডার দিতে নিচের বাটনে ক্লিক করুন</p>
