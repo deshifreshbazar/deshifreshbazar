@@ -1,136 +1,120 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { signIn, getSession } from "next-auth/react"
-import RootLayout from "@/components/layout/RootLayout"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { login } from "@/lib/auth"
-import { useUser } from "@/contexts/UserContext"
-import GoogleSignInButton from "@/components/GoogleSignInButton"
-import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/ui/toast"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, getSession } from "next-auth/react";
+import RootLayout from "@/components/layout/RootLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { login } from "@/lib/auth";
+import { useUser } from "@/contexts/UserContext";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/toast";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { setUser } = useUser()
-  const { success: showSuccess, error: showError } = useToast()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setUser } = useUser();
+  const { success: showSuccess, error: showError } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [error, setError] = useState("")
+  });
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Check for success message from registration
   useEffect(() => {
-    const success = searchParams?.get("success")
+    const success = searchParams?.get("success");
     if (success === "registered") {
-      showSuccess("Account created successfully! Please sign in.")
+      showSuccess("Account created successfully! Please sign in.");
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleGoogleSignIn = async () => {
-    setGoogleLoading(true)
-    setError("")
+    setGoogleLoading(true);
+    setError("");
 
     try {
+      // Use redirect method for better mobile compatibility
+      // Don't show loading toast here as it will be interrupted by redirect
       const result = await signIn("google", {
-        redirect: false,
-        callbackUrl: "/",
-      })
+        callbackUrl: `${window.location.origin}?google_auth=success`,
+        redirect: true, // Allow natural redirect flow
+      });
 
+      // This code won't execute due to redirect, but keep as fallback
       if (result?.error) {
-        setError("Google sign-in failed. Please try again.")
-        showError("Google sign-in failed. Please try again.")
-        return
-      }
-
-      // Get the session to update user context
-      const session = await getSession()
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          name: session.user.name || "",
-          email: session.user.email || "",
-          role: session.user.role as "USER" | "ADMIN",
-        })
-
-        // Show success message
-        if (session.user.isNewUser) {
-          showSuccess("Account created successfully! Welcome to Deshi Fresh Bazar!")
-        } else {
-          showSuccess("Login successful! Welcome back!")
-        }
-
-        // Redirect based on role
-        setTimeout(() => {
-          if (session.user.role === "ADMIN") {
-            router.push("/admin")
-          } else {
-            router.push("/")
-          }
-        }, 1000)
+        console.error("Google sign-in error:", result.error);
+        setError("Google sign-in failed. Please try again.");
+        showError("Google sign-in failed. Please try again.");
+        setGoogleLoading(false);
       }
     } catch (err) {
-      console.error("Google sign-in error:", err)
-      setError("Google sign-in failed. Please try again.")
-      showError("Google sign-in failed. Please try again.")
-    } finally {
-      setGoogleLoading(false)
+      console.error("Google sign-in error:", err);
+      setError("Google sign-in failed. Please try again.");
+      showError("Google sign-in failed. Please try again.");
+      setGoogleLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const result = await login(formData)
+      const result = await login(formData);
       // Set user data in context
       setUser({
         id: result.id,
         name: result.name,
         email: result.email,
         role: result.role,
-      })
+      });
 
       // Show success message
-      showSuccess("Login successful! Welcome back!")
+      showSuccess("Login successful! Welcome back!");
 
       // Redirect based on role
       setTimeout(() => {
         if (result.role === "ADMIN") {
-          router.push("/admin")
+          router.push("/admin");
         } else {
-          router.push("/")
+          router.push("/");
         }
-      }, 1000)
+      }, 1000);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Login failed. Please try again."
-      setError(errorMessage)
-      showError(errorMessage)
+      const errorMessage =
+        err instanceof Error ? err.message : "Login failed. Please try again.";
+      setError(errorMessage);
+      showError(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <RootLayout>
@@ -141,25 +125,35 @@ export default function LoginPage() {
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-gray-600">Sign in to your account to continue</CardDescription>
+              <CardDescription className="text-gray-600">
+                Sign in to your account to continue
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Google Sign In Button */}
-              <GoogleSignInButton onClick={handleGoogleSignIn} loading={googleLoading} className="w-full" />
+              <GoogleSignInButton
+                onClick={handleGoogleSignIn}
+                loading={googleLoading}
+                className="w-full"
+              />
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-muted-foreground">Or continue with email</span>
+                  <span className="bg-white px-2 text-muted-foreground">
+                    Or continue with email
+                  </span>
                 </div>
               </div>
 
               {/* Email/Password Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
-                  <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-600">{error}</div>
+                  <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-600">
+                    {error}
+                  </div>
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700 font-medium">
@@ -178,7 +172,10 @@ export default function LoginPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-700 font-medium">
+                    <Label
+                      htmlFor="password"
+                      className="text-gray-700 font-medium"
+                    >
                       Password
                     </Label>
                     <Link
@@ -218,7 +215,10 @@ export default function LoginPage() {
             <CardFooter className="flex justify-center">
               <div className="text-sm text-gray-600">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="text-green-600 hover:text-green-700 font-medium hover:underline">
+                <Link
+                  href="/register"
+                  className="text-green-600 hover:text-green-700 font-medium hover:underline"
+                >
                   Create account
                 </Link>
               </div>
@@ -227,5 +227,5 @@ export default function LoginPage() {
         </div>
       </div>
     </RootLayout>
-  )
+  );
 }
