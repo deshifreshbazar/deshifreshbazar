@@ -101,6 +101,8 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
+          console.log("Google sign-in attempt for:", user.email);
+
           // Check if user already exists
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email! },
@@ -135,30 +137,40 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // On initial sign in, populate token from user data
       if (user) {
-        // Get user from database to ensure we have the latest data
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
+        try {
+          // Get user from database to ensure we have the latest data
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email! },
+          });
 
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.id = dbUser.id;
-          // Propagate isNewUser if set by signIn callback
-          if (typeof user.isNewUser !== "undefined") {
-            token.isNewUser = user.isNewUser;
-          } else if (typeof token.isNewUser === "undefined") {
-            token.isNewUser = false;
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.id = dbUser.id;
+            token.name = dbUser.name;
+            token.email = dbUser.email;
+            // Propagate isNewUser if set by signIn callback
+            if (typeof user.isNewUser !== "undefined") {
+              token.isNewUser = user.isNewUser;
+            } else if (typeof token.isNewUser === "undefined") {
+              token.isNewUser = false;
+            }
           }
+        } catch (error) {
+          console.error("Error fetching user in JWT callback:", error);
         }
       }
+
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.role = token.role as string;
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
         session.user.isNewUser = token.isNewUser as boolean;
       }
       return session;
