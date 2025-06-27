@@ -15,7 +15,6 @@ import { FaFacebookMessenger } from "react-icons/fa";
 import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import HeroSlider from "@/components/HeroSlider";
 import YouTubeVideo from "@/components/YouTubeVideo";
-import GoogleAuthCallback from "@/components/GoogleAuthCallback";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/toast";
 
@@ -305,10 +304,6 @@ function HomePageInner() {
     handleGoogleCallback();
   }, [searchParams, setUser, showSuccess, showError, router]);
 
-  // Show callback component if processing Google Auth
-  if (isAuthCallback) {
-    return <GoogleAuthCallback />;
-  }
 
   if (loading) {
     return (
@@ -635,7 +630,7 @@ function HomePageInner() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={null}>
       <HomePageInner />
     </Suspense>
   );
