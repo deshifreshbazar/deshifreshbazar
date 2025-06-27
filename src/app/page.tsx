@@ -185,8 +185,13 @@ const ProductSkeleton = () => (
 );
 
 export default function HomePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setUser } = useUser();
+  const { success: showSuccess, error: showError } = useToast();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthCallback, setIsAuthCallback] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -518,7 +523,7 @@ export default function HomePage() {
                 thumbnail: "/src/assets/images/farmar.jpg",
               },
               {
-                title: "���মাদের প্রিমিয়াম প্যাকেজিং প্রক্রিয়া",
+                title: "আমাদের প্রিমিয়াম প্যাকেজিং প্রক্রিয়া",
                 description:
                   "আমাদের সূক্ষ্ম প্যাকেজিং প্রক্রিয়া যা ফলের তাজা ও নিখুঁত অবস্থা নিশ্চিত করে।",
                 videoId: "VQyuPf1QiVM",
