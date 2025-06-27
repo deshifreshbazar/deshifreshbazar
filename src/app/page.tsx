@@ -269,14 +269,14 @@ function HomePageInner() {
               role: session.user.role as "USER" | "ADMIN",
             });
 
-            // Show appropriate success message based on user status
-            if (session.user.isNewUser) {
-              showSuccess(
-                "Account created successfully! Welcome to Deshi Fresh Bazar!",
-              );
-            } else {
-              showSuccess("Login successful! Welcome back!");
-            }
+            // // Show appropriate success message based on user status
+            // if (session.user.isNewUser) {
+            //   showSuccess(
+            //     "Account created successfully! Welcome to Deshi Fresh Bazar!",
+            //   );
+            // } else {
+            //   showSuccess("Login successful! Welcome back!");
+            // }
 
             // Clean up URL
             const url = new URL(window.location.href);

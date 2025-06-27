@@ -148,8 +148,8 @@ export default function LoginPage() {
         role: result.role,
       });
 
-      // Show success message
-      showSuccess("Login successful! Welcome back!");
+      // // Show success message
+      // showSuccess("Login successful! Welcome back!");
 
       // Redirect based on role
       setTimeout(() => {
