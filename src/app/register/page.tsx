@@ -42,6 +42,7 @@ interface PasswordRequirements {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setUser } = useUser();
   const { success: showSuccess, error: showError } = useToast();
   const [formData, setFormData] = useState({
