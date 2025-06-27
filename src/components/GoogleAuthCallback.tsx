@@ -83,18 +83,18 @@ export default function GoogleAuthCallback() {
     searchParams,
   ]);
 
-  // Show loading state while processing
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">
-          Completing authentication...
-        </h2>
-        <p className="text-sm text-gray-600">
-          Please wait while we set up your account.
-        </p>
-      </div>
-    </div>
-  );
+  // // Show loading state while processing
+  // return (
+  //   <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  //     <div className="text-center">
+  //       <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+  //       <h2 className="text-lg font-semibold text-gray-800 mb-2">
+  //         Completing authentication...
+  //       </h2>
+  //       <p className="text-sm text-gray-600">
+  //         Please wait while we set up your account.
+  //       </p>
+  //     </div>
+  //   </div>
+  // );
 }

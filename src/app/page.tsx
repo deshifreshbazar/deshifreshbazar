@@ -15,7 +15,6 @@ import { FaFacebookMessenger } from "react-icons/fa";
 import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import HeroSlider from "@/components/HeroSlider";
 import YouTubeVideo from "@/components/YouTubeVideo";
-import GoogleAuthCallback from "@/components/GoogleAuthCallback";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/toast";
 
@@ -270,14 +269,14 @@ function HomePageInner() {
               role: session.user.role as "USER" | "ADMIN",
             });
 
-            // Show appropriate success message based on user status
-            if (session.user.isNewUser) {
-              showSuccess(
-                "Account created successfully! Welcome to Deshi Fresh Bazar!",
-              );
-            } else {
-              showSuccess("Login successful! Welcome back!");
-            }
+            // // Show appropriate success message based on user status
+            // if (session.user.isNewUser) {
+            //   showSuccess(
+            //     "Account created successfully! Welcome to Deshi Fresh Bazar!",
+            //   );
+            // } else {
+            //   showSuccess("Login successful! Welcome back!");
+            // }
 
             // Clean up URL
             const url = new URL(window.location.href);
@@ -305,10 +304,6 @@ function HomePageInner() {
     handleGoogleCallback();
   }, [searchParams, setUser, showSuccess, showError, router]);
 
-  // Show callback component if processing Google Auth
-  if (isAuthCallback) {
-    return <GoogleAuthCallback />;
-  }
 
   if (loading) {
     return (
@@ -635,7 +630,7 @@ function HomePageInner() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={null}>
       <HomePageInner />
     </Suspense>
   );
