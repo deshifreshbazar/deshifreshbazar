@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { Suspense } from "react";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -40,7 +41,7 @@ interface PasswordRequirements {
   special: boolean;
 }
 
-export default function RegisterPage() {
+function RegisterPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUser();
@@ -548,5 +549,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </RootLayout>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

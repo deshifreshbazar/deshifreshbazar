@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star, Truck, Shield, Award, Phone } from "lucide-react";
 import { FaFacebookMessenger } from "react-icons/fa";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import HeroSlider from "@/components/HeroSlider";
 import YouTubeVideo from "@/components/YouTubeVideo";
 import GoogleAuthCallback from "@/components/GoogleAuthCallback";
@@ -184,7 +184,7 @@ const ProductSkeleton = () => (
   </Card>
 );
 
-export default function HomePage() {
+function HomePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUser();
@@ -192,6 +192,44 @@ export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthCallback, setIsAuthCallback] = useState(false);
+
+  const features = useMemo(
+    () => [
+      {
+        id: "01",
+        title: "নিবন্ধিত নিরাপদ বাগান",
+        description:
+          "আমরা আমাদের নিবন্ধিত ও ক্ষতিকর রাসায়নিক মুক্ত ফলের বাগান থেকে ফল সংগ্রহ করি।",
+        image: garden.src,
+        icon: <Shield className="w-8 h-8" />,
+      },
+      {
+        id: "02",
+        title: "প্রিমিয়াম মানের পণ্য",
+        description:
+          "আনার সর্বোত্তম অভিজ্ঞতার জন্য আমরা শুধুমাত্র প্রিমিয়াম মানের ফল নির্বাচন ও বাছাই করি।",
+        image: product.src,
+        icon: <Award className="w-8 h-8" />,
+      },
+      {
+        id: "03",
+        title: "প্রিমিয়াম প্যাকেজিং",
+        description:
+          "আপনি নিজের, পরিবার বা বন্ধুদের উপহার দিতে চান। আমরা সেরা প্যাকেজ করেছি!",
+        image: packaging.src,
+        icon: <Award className="w-8 h-8" />,
+      },
+      {
+        id: "04",
+        title: "বাগান তাজা ডেলিভারি",
+        description:
+          "আমরা গ্রাহকদের কাছ থেকে প্রি-অর্ডার নিই এবং বাগান থেকে টেবলে দ্রুত ডেলিভারি করি।",
+        image: delivery.src,
+        icon: <Truck className="w-8 h-8" />,
+      },
+    ],
+    [],
+  );
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -271,44 +309,6 @@ export default function HomePage() {
   if (isAuthCallback) {
     return <GoogleAuthCallback />;
   }
-
-  const features = useMemo(
-    () => [
-      {
-        id: "01",
-        title: "নিবন্ধিত নিরাপদ বাগান",
-        description:
-          "আমরা আমাদের নিবন্ধিত ও ক্ষতিকর রাসায়নিক মুক্ত ফলের বাগান থেকে ফল সংগ্রহ করি।",
-        image: garden.src,
-        icon: <Shield className="w-8 h-8" />,
-      },
-      {
-        id: "02",
-        title: "প্রিমিয়াম মানের পণ্য",
-        description:
-          "আ��নার সর্বোত্তম অভিজ্ঞতার জন্য আমরা শুধুমাত্র প্রিমিয়াম মানের ফল নির্বাচন ও বাছাই করি।",
-        image: product.src,
-        icon: <Award className="w-8 h-8" />,
-      },
-      {
-        id: "03",
-        title: "প্রিমিয়াম প্যাকেজিং",
-        description:
-          "আপনি নিজের, পরিবার বা বন্ধুদের উপহার দিতে চান। আমরা সেরা প্যাকেজ করেছি!",
-        image: packaging.src,
-        icon: <Award className="w-8 h-8" />,
-      },
-      {
-        id: "04",
-        title: "বাগান তাজা ডেলিভারি",
-        description:
-          "আমরা গ্রাহকদের কাছ থেকে প্রি-অর্ডার নিই এবং বাগান থেকে টেব���লে দ্রুত ডেলিভারি করি।",
-        image: delivery.src,
-        icon: <Truck className="w-8 h-8" />,
-      },
-    ],
-    [],
-  );
 
   if (loading) {
     return (
@@ -584,7 +584,7 @@ export default function HomePage() {
               {
                 title: "আমাদের প্রিমিয়াম প্যাকেজিং প্রক্রিয়া",
                 description:
-                  "আমাদের স��ক্ষ্ম প্যাকেজিং প্রক্রিয়া যা ফলের তাজা ও নিখুঁত অবস্থা নিশ্চিত করে।",
+                  "আমাদের সক্ষ্ম প্যাকেজিং প্রক্রিয়া যা ফলের তাজা ও নিখুঁত অবস্থা নিশ্চিত করে।",
                 videoId: "VQyuPf1QiVM",
                 thumbnail: "/src/assets/images/gopalvog.jpg",
               },
@@ -630,5 +630,13 @@ export default function HomePage() {
         </div>
       </section>
     </RootLayout>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageInner />
+    </Suspense>
   );
 }
