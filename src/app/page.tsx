@@ -213,6 +213,65 @@ export default function HomePage() {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Handle Google Auth callback if user lands on homepage after authentication
+  useEffect(() => {
+    const handleGoogleCallback = async () => {
+      const googleAuth = searchParams?.get("google_auth");
+
+      if (googleAuth === "success") {
+        setIsAuthCallback(true);
+        try {
+          // Get the session after Google redirect
+          const session = await getSession();
+
+          if (session?.user) {
+            setUser({
+              id: session.user.id,
+              name: session.user.name || "",
+              email: session.user.email || "",
+              role: session.user.role as "USER" | "ADMIN",
+            });
+
+            // Show appropriate success message based on user status
+            if (session.user.isNewUser) {
+              showSuccess(
+                "Account created successfully! Welcome to Deshi Fresh Bazar!",
+              );
+            } else {
+              showSuccess("Login successful! Welcome back!");
+            }
+
+            // Clean up URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("google_auth");
+            window.history.replaceState({}, "", url.toString());
+
+            // If admin, redirect to admin panel after delay
+            if (session.user.role === "ADMIN") {
+              setTimeout(() => {
+                router.push("/admin");
+              }, 1500);
+            }
+          }
+        } catch (error) {
+          console.error("Error handling Google callback:", error);
+          showError(
+            "Authentication completed, but there was an issue. Please try signing in again.",
+          );
+        } finally {
+          setTimeout(() => setIsAuthCallback(false), 2000);
+        }
+      }
+    };
+
+    handleGoogleCallback();
+  }, [searchParams, setUser, showSuccess, showError, router]);
+
+  // Show callback component if processing Google Auth
+  if (isAuthCallback) {
+    return <GoogleAuthCallback />;
+  }
+
   const features = useMemo(
     () => [
       {
@@ -227,7 +286,7 @@ export default function HomePage() {
         id: "02",
         title: "প্রিমিয়াম মানের পণ্য",
         description:
-          "আপনার সর্বোত্তম অভিজ্ঞতার জন্য আমরা শুধুমাত্র প্রিমিয়াম মানের ফল নির্বাচন ও বাছাই করি।",
+          "আ��নার সর্বোত্তম অভিজ্ঞতার জন্য আমরা শুধুমাত্র প্রিমিয়াম মানের ফল নির্বাচন ও বাছাই করি।",
         image: product.src,
         icon: <Award className="w-8 h-8" />,
       },
@@ -243,7 +302,7 @@ export default function HomePage() {
         id: "04",
         title: "বাগান তাজা ডেলিভারি",
         description:
-          "আমরা গ্রাহকদের কাছ থেকে প্রি-অর্ডার নিই এবং বাগান থেকে টেবিলে দ্রুত ডেলিভারি করি।",
+          "আমরা গ্রাহকদের কাছ থেকে প্রি-অর্ডার নিই এবং বাগান থেকে টেব���লে দ্রুত ডেলিভারি করি।",
         image: delivery.src,
         icon: <Truck className="w-8 h-8" />,
       },
@@ -525,7 +584,7 @@ export default function HomePage() {
               {
                 title: "আমাদের প্রিমিয়াম প্যাকেজিং প্রক্রিয়া",
                 description:
-                  "আমাদের সূক্ষ্ম প্যাকেজিং প্রক্রিয়া যা ফলের তাজা ও নিখুঁত অবস্থা নিশ্চিত করে।",
+                  "আমাদের স��ক্ষ্ম প্যাকেজিং প্রক্রিয়া যা ফলের তাজা ও নিখুঁত অবস্থা নিশ্চিত করে।",
                 videoId: "VQyuPf1QiVM",
                 thumbnail: "/src/assets/images/gopalvog.jpg",
               },
