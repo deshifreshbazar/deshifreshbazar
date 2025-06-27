@@ -45,6 +45,59 @@ export default function LoginPage() {
     }
   }, [searchParams]);
 
+  // Handle Google Auth callback and session updates
+  useEffect(() => {
+    const handleGoogleCallback = async () => {
+      const googleAuth = searchParams?.get("google_auth");
+
+      if (googleAuth === "success") {
+        try {
+          // Get the session after Google redirect
+          const session = await getSession();
+
+          if (session?.user) {
+            setUser({
+              id: session.user.id,
+              name: session.user.name || "",
+              email: session.user.email || "",
+              role: session.user.role as "USER" | "ADMIN",
+            });
+
+            // Show appropriate success message based on user status
+            if (session.user.isNewUser) {
+              showSuccess(
+                "Account created successfully! Welcome to Deshi Fresh Bazar!",
+              );
+            } else {
+              showSuccess("Login successful! Welcome back!");
+            }
+
+            // Clean up URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("google_auth");
+            window.history.replaceState({}, "", url.toString());
+
+            // Redirect based on role after a short delay for user to see the message
+            setTimeout(() => {
+              if (session.user.role === "ADMIN") {
+                router.push("/admin");
+              } else {
+                router.push("/");
+              }
+            }, 1500);
+          }
+        } catch (error) {
+          console.error("Error handling Google callback:", error);
+          showError(
+            "Authentication completed, but there was an issue. Please try signing in again.",
+          );
+        }
+      }
+    };
+
+    handleGoogleCallback();
+  }, [searchParams, setUser, showSuccess, showError, router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
