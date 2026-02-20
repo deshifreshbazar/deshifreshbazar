@@ -84,7 +84,7 @@ export default function LoginPage() {
               } else {
                 router.push("/");
               }
-            }, 1500);
+            }, 1000);
           }
         } catch (error) {
           console.error("Error handling Google callback:", error);
@@ -148,8 +148,8 @@ export default function LoginPage() {
         role: result.role,
       });
 
-      // // Show success message
-      // showSuccess("Login successful! Welcome back!");
+      // Show success message
+      showSuccess("Login successful! Welcome back!");
 
       // Redirect based on role
       setTimeout(() => {

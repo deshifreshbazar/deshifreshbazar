@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose';
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname } = req.nextUrl; //localhost:3000/admin/
 
   // Protect admin routes
   if (pathname.startsWith('/admin')) {

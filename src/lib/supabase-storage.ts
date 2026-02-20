@@ -1,10 +1,22 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Create Supabase client for server-side operations
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+let supabaseInstance: SupabaseClient | null = null
+
+function getSupabase(): SupabaseClient {
+  if (supabaseInstance) return supabaseInstance
+  const url = supabaseUrl?.trim()
+  const key = supabaseServiceKey?.trim()
+  if (!url || !key || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+    throw new Error(
+      "Invalid Supabase config: NEXT_PUBLIC_SUPABASE_URL must be a valid HTTP(S) URL and SUPABASE_SERVICE_ROLE_KEY must be set."
+    )
+  }
+  supabaseInstance = createClient(url, key)
+  return supabaseInstance
+}
 
 /**
  * Generate public URL for Supabase Storage file
@@ -24,7 +36,7 @@ export function getSupabaseImageUrl(filePath: string | null | undefined, bucket 
   }
 
   // Generate public URL from Supabase Storage
-  const { data } = supabase.storage.from(bucket).getPublicUrl(filePath)
+  const { data } = getSupabase().storage.from(bucket).getPublicUrl(filePath)
 
   return data.publicUrl || "/placeholder.svg?height=400&width=400"
 }
@@ -45,7 +57,7 @@ export async function uploadToSupabase(
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
     // Upload file
-    const { data, error } = await supabase.storage.from(bucket).upload(fileName, file, {
+    const { data, error } = await getSupabase().storage.from(bucket).upload(fileName, file, {
       cacheControl: "3600",
       upsert: false,
     })
@@ -56,9 +68,9 @@ export async function uploadToSupabase(
     }
 
     return { path: data.path }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Upload error:", error)
-    return { error: "Failed to upload file" }
+    return { error: error?.message || String(error) }
   }
 }
 
@@ -78,7 +90,7 @@ export async function deleteFromSupabase(
       return { success: true }
     }
 
-    const { error } = await supabase.storage.from(bucket).remove([filePath])
+    const { error } = await getSupabase().storage.from(bucket).remove([filePath])
 
     if (error) {
       console.error("Supabase delete error:", error)
@@ -86,9 +98,9 @@ export async function deleteFromSupabase(
     }
 
     return { success: true }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Delete error:", error)
-    return { success: false, error: "Failed to delete file" }
+    return { success: false, error: error?.message || String(error) }
   }
 }
 
@@ -100,7 +112,7 @@ export async function deleteFromSupabase(
  */
 export async function listSupabaseFiles(bucket = "product-images", folder?: string) {
   try {
-    const { data, error } = await supabase.storage.from(bucket).list(folder, {
+    const { data, error } = await getSupabase().storage.from(bucket).list(folder, {
       limit: 100,
       offset: 0,
     })

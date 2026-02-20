@@ -1,8 +1,6 @@
 "use client";
 
 import { deleteCookie } from '@/utils/cookies'; // adjust path as needed
-
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface User {
