@@ -1,32 +1,25 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import prismaClient from '../util';
-import { PrismaClient } from '@prisma/client';
 
 // Configure dynamic route handling
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-const prisma = new PrismaClient();
-
-// Helper function to verify JWT token
 async function verifyToken(token: string) {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return null;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, secret);
     return decoded as { id: string };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
 
-// Types for order data
 interface OrderItem {
   id: string;
   name: string;
@@ -37,22 +30,17 @@ interface OrderItem {
   selectedPackage?: string;
 }
 
-interface OrderData {
-  fullName: string;
-  email?: string;
-  phone: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  country: string;
-  items: OrderItem[];
-  subtotal: number;
-  shipping: number;
-  total: number;
-  paymentMethod: string;
+async function getAuthenticatedUserId() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  if (token) {
+    const decoded = await verifyToken(token);
+    if (decoded?.id) return decoded.id;
+  }
+  const session = await getServerSession(authOptions);
+  return session?.user?.id ?? null;
 }
 
-// Create new order
 export async function POST(request: Request) {
   try {
     const data = await request.json();
@@ -71,9 +59,11 @@ export async function POST(request: Request) {
       paymentMethod 
     } = data;
 
-    // Create the order
-    const order = await prisma.order.create({
+    const userId = await getAuthenticatedUserId();
+
+    const order = await prismaClient.order.create({
       data: {
+        ...(userId ? { userId } : {}),
         customerName: fullName,
         customerEmail: email,
         customerPhone: phone,
@@ -113,23 +103,10 @@ export async function POST(request: Request) {
   }
 }
 
-// Get orders (for authenticated users)
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    // Get token from cookies
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { message: 'Not authorized' },
-        { status: 401 }
-      );
-    }
-
-    // Verify token and get user ID
-    const decoded = await verifyToken(token);
-    if (!decoded) {
+    const userId = await getAuthenticatedUserId();
+    if (!userId) {
       return NextResponse.json(
         { message: 'Not authorized' },
         { status: 401 }
@@ -139,7 +116,7 @@ export async function GET(request: Request) {
     // Get orders using Prisma
     const orders = await prismaClient.order.findMany({
       where: {
-        userId: decoded.id,
+        userId,
       },
       include: {
         items: true,

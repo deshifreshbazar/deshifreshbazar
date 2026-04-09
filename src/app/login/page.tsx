@@ -5,7 +5,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import RootLayout from "@/components/layout/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUser();
+  const { data: session, status } = useSession();
   const { success: showSuccess, error: showError } = useToast();
   const [formData, setFormData] = useState({
     email: "",
@@ -36,6 +37,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      router.push("/");
+    }
+  }, [status, session, router]);
 
   // Check for success message from registration
   useEffect(() => {
@@ -61,6 +69,7 @@ export default function LoginPage() {
               name: session.user.name || "",
               email: session.user.email || "",
               role: session.user.role as "USER" | "ADMIN",
+              image: session.user.image || undefined,
             });
 
             // Show appropriate success message based on user status

@@ -80,7 +80,17 @@ export default function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="hidden sm:flex">
-                <User className="h-5 w-5" />
+                {user?.image ? (
+                  <Image
+                    src={user.image}
+                    alt="Profile"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <User className="h-5 w-5" />
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -145,7 +155,17 @@ export default function Header() {
                       href="/profile"
                       className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
                     >
-                      <User className="h-4 w-4" />
+                      {user?.image ? (
+                        <Image
+                          src={user.image}
+                          alt="Profile"
+                          width={20}
+                          height={20}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <User className="h-4 w-4" />
+                      )}
                       <span>Profile</span>
                     </Link>
                     <Link

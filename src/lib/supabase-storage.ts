@@ -1,9 +1,24 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 let supabaseInstance: SupabaseClient | null = null
+
+export function normalizeImageUrl(value: string | null | undefined): string | undefined {
+  if (!value) return undefined
+  const cleaned = value.trim().replace(/^["'`]+|["'`]+$/g, "").trim()
+  if (!cleaned) return undefined
+  if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) {
+    return cleaned
+  }
+  return undefined
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  return String(error)
+}
 
 function getSupabase(): SupabaseClient {
   if (supabaseInstance) return supabaseInstance
@@ -31,8 +46,9 @@ export function getSupabaseImageUrl(filePath: string | null | undefined, bucket 
   }
 
   // If it's already a full URL, return as is (for backward compatibility)
-  if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
-    return filePath
+  const normalizedUrl = normalizeImageUrl(filePath)
+  if (normalizedUrl) {
+    return normalizedUrl
   }
 
   // Generate public URL from Supabase Storage
@@ -68,9 +84,9 @@ export async function uploadToSupabase(
     }
 
     return { path: data.path }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Upload error:", error)
-    return { error: error?.message || String(error) }
+    return { error: getErrorMessage(error) }
   }
 }
 
@@ -98,9 +114,9 @@ export async function deleteFromSupabase(
     }
 
     return { success: true }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Delete error:", error)
-    return { success: false, error: error?.message || String(error) }
+    return { success: false, error: getErrorMessage(error) }
   }
 }
 

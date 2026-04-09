@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
     }
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
     const pageSize = 10;
     const skip = (page - 1) * pageSize;
     const [products, total] = await Promise.all([
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     }
 
     // Validate price is a number
-    const priceNum = parseFloat(price);
+    const priceNum = Number.parseFloat(price);
     if (isNaN(priceNum) || priceNum < 0) {
       return NextResponse.json(
         { error: 'Invalid price' },
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     }
 
     // Validate stock is a number
-    const stockNum = parseInt(stock) || 0;
+    const stockNum = Number.parseInt(stock) || 0;
     if (isNaN(stockNum) || stockNum < 0) {
       return NextResponse.json(
         { error: 'Invalid stock quantity' },
@@ -130,7 +130,7 @@ export async function POST(request: Request) {
           await tx.package.createMany({
             data: validPackages.map((pkg: any) => ({
               name: pkg.name,
-              price: parseFloat(pkg.price),
+              price: Number.parseFloat(pkg.price),
               productId: newProduct.id
             }))
           });

@@ -5,6 +5,7 @@ import { useUser } from '@/contexts/UserContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { useRouter } from 'next/navigation';
 
 interface OrderItem {
   id: string;
@@ -28,6 +29,7 @@ interface Order {
 
 export default function OrdersPage() {
   const { user } = useUser();
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,13 +37,19 @@ export default function OrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch('/api/orders');
+        const response = await fetch('/api/orders', {
+          credentials: 'include',
+        });
+        if (response.status === 401) {
+          setError('Please login again to view your orders.');
+          return;
+        }
         if (!response.ok) {
           throw new Error('Failed to fetch orders');
         }
         const data = await response.json();
         setOrders(data);
-      } catch (err) {
+      } catch {
         setError('Failed to load orders');
       } finally {
         setLoading(false);
@@ -77,7 +85,16 @@ export default function OrdersPage() {
     return (
       <>
         <Header />
-        <div className="container py-8 text-red-600">{error}</div>
+        <div className="container py-8">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            type="button"
+            className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+            onClick={() => router.push('/login')}
+          >
+            Go to Login
+          </button>
+        </div>
         <Footer />
       </>
     );
@@ -97,7 +114,7 @@ export default function OrdersPage() {
               <Card key={order.id}>
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
-                    <span>Order #{order.id.slice(-6)}</span>
+                    <span>Order ID: {order.id}</span>
                     <span className="text-sm font-normal">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </span>
@@ -111,7 +128,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium">Total Amount:</span>
-                      <span>${order.totalAmount.toFixed(2)}</span>
+                      <span>৳{order.totalAmount.toFixed(2)}</span>
                     </div>
                     <div>
                       <span className="font-medium">Items:</span>
@@ -123,14 +140,14 @@ export default function OrdersPage() {
                                 <img src={item.productImage} alt={item.productName || `Product ${item.productId}`} className="w-12 h-12 object-cover rounded" />
                               )}
                               <div>
-                                <div className="font-medium">{item.productName || `Product #${item.productId}`}</div>
+                                <div className="font-medium">{item.productName || `Product ৳${item.productId}`}</div>
                                 {item.packageType && <div className="text-xs text-gray-500">Package: {item.packageType}</div>}
                               </div>
                             </div>
                             <div className="text-right mt-2 md:mt-0">
-                              <div>{item.quantity} x ${item.unitPrice?.toFixed(2) ?? item.price?.toFixed(2) ?? '0.00'}</div>
+                              <div>{item.quantity} x৳{item.unitPrice?.toFixed(2) ?? item.price?.toFixed(2) ?? '0.00'}</div>
                               {item.totalPrice !== undefined && (
-                                <div className="text-xs text-gray-500">Total: ${item.totalPrice.toFixed(2)}</div>
+                                <div className="text-xs text-gray-500">Total:৳{item.totalPrice.toFixed(2)}</div>
                               )}
                             </div>
                           </div>

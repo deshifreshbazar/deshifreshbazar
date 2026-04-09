@@ -130,7 +130,7 @@ export default function AddProduct() {
           image: imageUrl,
           packages: validPackages.map(pkg => ({
             name: pkg.name,
-            price: parseFloat(pkg.price)
+            price: Number.parseFloat(pkg.price)
           }))
         }),
       });

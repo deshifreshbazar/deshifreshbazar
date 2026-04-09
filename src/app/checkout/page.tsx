@@ -307,7 +307,7 @@ export default function CheckoutPage() {
                           <div className="mb-4 rounded border border-gray-200 bg-gray-100 p-4 text-gray-700 text-sm">
                             Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our{' '}
                             <Link href="/privacy" className="text-green-700 font-semibold hover:underline" target="_blank">Privacy Policy</Link>.
-                            (পেমেন্ট বা অর্ডার সংক্রান্ত যেকোনো সাহায্যের জন্য, অনুগ্রহ করে এখানে ইনবক্স করুন) <a href="https://wa.me/8801717171717" target="_blank" className="text-green-700 font-semibold hover:underline">এখানে</a>
+                            (পেমেন্ট বা অর্ডার সংক্রান্ত যেকোনো সাহায্যের জন্য, অনুগ্রহ করে এখানে ইনবক্স করুন) <a href="https://wa.me/8801717171717" target="_blank" className="text-green-700 font-semibold hover:underline" rel="noreferrer">এখানে</a>
                           </div>
                           <div className="flex items-center mb-6">
                             <input

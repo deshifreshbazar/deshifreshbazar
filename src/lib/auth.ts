@@ -122,11 +122,15 @@ export const authOptions: NextAuthOptions = {
             user.id = newUser.id;
             user.role = newUser.role;
             user.isNewUser = true;
+            // Preserve image from Google profile
+            user.image = user.image;
             console.log("New Google user created:", newUser.email);
           } else {
             user.id = existingUser.id;
             user.role = existingUser.role;
             user.isNewUser = false;
+            // Preserve image from Google profile
+            user.image = user.image;
             console.log("Existing Google user signed in:", existingUser.email);
           }
           return true;
@@ -151,6 +155,10 @@ export const authOptions: NextAuthOptions = {
             token.id = dbUser.id;
             token.name = dbUser.name;
             token.email = dbUser.email;
+            // Preserve image from Google profile if available
+            if (user.image) {
+              token.image = user.image;
+            }
             // Propagate isNewUser if set by signIn callback
             if (typeof user.isNewUser !== "undefined") {
               token.isNewUser = user.isNewUser;
@@ -172,13 +180,13 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.isNewUser = token.isNewUser as boolean;
+        session.user.image = token.image as string | undefined;
       }
       return session;
     },
   },
   pages: {
     signIn: "/login",
-    signUp: "/register",
     error: "/login", // Redirect errors to login page
   },
   session: {
@@ -195,6 +203,7 @@ declare module "next-auth" {
     role: string;
     id: string;
     isNewUser?: boolean;
+    image?: string;
   }
 
   interface Session {
@@ -202,6 +211,7 @@ declare module "next-auth" {
       role: string;
       id: string;
       isNewUser?: boolean;
+      image?: string;
     };
   }
 }
@@ -211,6 +221,7 @@ declare module "next-auth/jwt" {
     role: string;
     id: string;
     isNewUser?: boolean;
+    image?: string;
   }
 }
 

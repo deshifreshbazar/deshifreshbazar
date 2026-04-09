@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { BottomMenuBar } from '@/components/admin/BottomMenuBar';
@@ -9,7 +9,7 @@ import { useUser } from '@/contexts/UserContext';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { logout } = useUser();
+  const { user, logout } = useUser();
 
   const handleLogout = () => {
     logout();
@@ -46,6 +46,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
           </nav>
           <div className="sticky bottom-0 p-4 border-t border-[#1a2233] bg-[#101828] mt-auto">
+            {user && (
+              <div className="mb-4 flex items-center gap-3 p-3 rounded-lg bg-[#1a2233]">
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
+                    <span className="text-white font-medium">{user.name?.charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                </div>
+              </div>
+            )}
             <button
               onClick={handleLogout}
               className="w-full py-2 px-3 rounded bg-red-600 hover:bg-red-700 text-white transition-colors duration-200 flex items-center gap-2 justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#101828]"

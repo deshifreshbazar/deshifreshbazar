@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import RootLayout from "@/components/layout/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,7 @@ function RegisterPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUser();
+  const { data: session, status } = useSession();
   const { success: showSuccess, error: showError } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -86,6 +87,13 @@ function RegisterPageInner() {
   };
 
   // Handle Google Auth callback and session updates
+  // Redirect if already logged in
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      router.push("/");
+    }
+  }, [status, session, router]);
+
   useEffect(() => {
     const handleGoogleCallback = async () => {
       const googleAuth = searchParams?.get("google_auth");

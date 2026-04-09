@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Product } from '@prisma/client';
+import type { Product } from '@prisma/client';
 import { FaBoxOpen, FaShoppingCart, FaUsers, FaChartBar, FaGripVertical } from 'react-icons/fa';
 import { Loader } from '@/components/ui/loader';
-import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable, type DropResult, type DroppableProvided, type DraggableProvided } from '@hello-pangea/dnd';
 
 interface Category {
   id: string;

@@ -1,5 +1,6 @@
 import { Toaster, toast as sonnerToast } from "sonner"
-import React, { createContext, useContext } from "react"
+import type React from "react"
+import { createContext, useContext } from "react"
 
 // Define ToastOptions type here since it's not exported from "sonner"
 type ToastOptions = {

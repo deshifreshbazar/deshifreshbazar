@@ -73,10 +73,10 @@ export async function PUT(
           name,
           description,
           details,
-          price: parseFloat(price),
+          price: Number.parseFloat(price),
           image,
           categoryId,
-          stock: parseInt(stock) || 0,
+          stock: Number.parseInt(stock) || 0,
           slug,
         },
         include: {
@@ -98,7 +98,7 @@ export async function PUT(
           await tx.package.createMany({
             data: validPackages.map((pkg: any) => ({
               name: pkg.name,
-              price: parseFloat(pkg.price),
+              price: Number.parseFloat(pkg.price),
               productId: params.id
             }))
           });

@@ -205,7 +205,7 @@ export default function EditProductPage() {
       const validPackages = packages.filter(pkg => pkg.name && pkg.price).map(pkg => {
         const packageData: { name: string; price: number; id?: string } = {
           name: pkg.name,
-          price: parseFloat(pkg.price)
+          price: Number.parseFloat(pkg.price)
         };
         // Only include id if it exists (for existing packages)
         if (pkg.id) {

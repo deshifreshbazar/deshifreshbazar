@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
     // Get query parameters
     const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '1');
+    const page = Number.parseInt(url.searchParams.get('page') || '1');
     const search = url.searchParams.get('search') || '';
     const status = url.searchParams.get('status') || '';
     const sort = url.searchParams.get('sort') || 'desc';
@@ -38,7 +38,7 @@ export async function GET(request: Request) {
     const skip = (page - 1) * ITEMS_PER_PAGE;
 
     // Build the where clause for search and status filter
-    let where: any = {};
+    const where: any = {};
     if (search) {
       where.OR = [
         { customerName: { contains: search, mode: 'insensitive' } },

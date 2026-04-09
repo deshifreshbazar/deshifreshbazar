@@ -3,7 +3,7 @@
 import { useState } from "react";
 import RootLayout from "@/components/layout/RootLayout";
 import Image from "next/image";
-import { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 
 // Import images directly
 import gallery1 from "@/assets/gallery/1.jpg";
