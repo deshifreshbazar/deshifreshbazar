@@ -270,8 +270,29 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
 }
 
 export async function logout() {
-  // Remove token from cookie
-  setCookie("token", "", -1); // Set expiry to past date to remove cookie
+  if (typeof window !== "undefined") {
+    try {
+      const csrfResponse = await fetch("/api/auth/csrf");
+      if (csrfResponse.ok) {
+        const csrfData = (await csrfResponse.json()) as { csrfToken?: string };
+        if (csrfData.csrfToken) {
+          const formData = new URLSearchParams({
+            csrfToken: csrfData.csrfToken,
+            callbackUrl: `${window.location.origin}/login`,
+          });
+          await fetch("/api/auth/signout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData.toString(),
+          });
+        }
+      }
+    } catch {}
+  }
+
+  setCookie("token", "", -1);
 }
 
 export async function getCurrentUser() {

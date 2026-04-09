@@ -11,8 +11,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const { user, logout } = useUser();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/login');
   };
 
@@ -66,7 +66,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             )}
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                void handleLogout();
+              }}
               className="w-full py-2 px-3 rounded bg-red-600 hover:bg-red-700 text-white transition-colors duration-200 flex items-center gap-2 justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#101828]"
             >
               <svg

@@ -2,6 +2,7 @@
 
 import { deleteCookie } from '@/utils/cookies';
 import { normalizeImageUrl } from "@/lib/supabase-storage";
+import { signOut } from "next-auth/react";
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 interface User {
@@ -15,7 +16,7 @@ interface User {
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -76,15 +77,22 @@ export function UserProvider({ children }: { children: ReactNode }) {
     syncFromSession();
   }, []);
 
-  const logout = () => {
+  const clearUserState = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('cart');
     deleteCookie('token');
-  
     setUser(null);
   };
-  
+
+  const logout = async () => {
+    clearUserState();
+    try {
+      await signOut({ redirect: false });
+    } finally {
+      clearUserState();
+    }
+  };
 
   const value = {
     user,

@@ -54,8 +54,8 @@ export default function AdminUsersPage() {
 
   const filteredUsers = users.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()));
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/login');
   };
 
@@ -73,7 +73,9 @@ export default function AdminUsersPage() {
       <div className="block md:hidden bg-[#fcfdff] min-h-screen pb-24">
         <div className="flex justify-between items-center px-4 pt-4 pb-2">
           <h1 className="text-2xl font-bold">Users</h1>
-          <Button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2 px-4 py-2 rounded-lg">
+          <Button onClick={() => {
+            void handleLogout();
+          }} className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2 px-4 py-2 rounded-lg">
             <FaUserPlus className="text-lg" /> Log Out
           </Button>
         </div>

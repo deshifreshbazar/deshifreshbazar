@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, User, Menu, LogOut } from "lucide-react";
 import {
@@ -17,9 +18,14 @@ import { useUser } from "@/contexts/UserContext";
 import logo from "@/assets/images/fresh-logo.jpg";
 
 export default function Header() {
+  const router = useRouter();
   const { getCartCount } = useCart();
   const { user, logout } = useUser();
   const cartCount = getCartCount();
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   const navLinks = [
     { title: "Home", path: "/" },
@@ -103,7 +109,12 @@ export default function Header() {
                     <Link href="/orders">My Orders</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="text-red-600">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      void handleLogout();
+                    }}
+                    className="text-red-600"
+                  >
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
@@ -175,7 +186,9 @@ export default function Header() {
                       <span>My Orders</span>
                     </Link>
                     <button
-                      onClick={logout}
+                      onClick={() => {
+                        void handleLogout();
+                      }}
                       className="flex items-center gap-2 text-sm font-medium text-red-600"
                     >
                       <LogOut className="h-4 w-4" />
