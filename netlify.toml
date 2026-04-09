@@ -1,5 +1,5 @@
 [images]
-  remote_images = ["https://source.unsplash.com/.*", "https://images.unsplash.com/.*", "https://ext.same-assets.com/.*", "https://ugc.same-assets.com/.*"]
+  remote_images = ["https://source.unsplash.com/.*", "https://images.unsplash.com/.*", "https://ext.same-assets.com/.*", "https://ugc.same-assets.com/.*", "https://.*\\.supabase\\.co/storage/v1/object/public/.*"]
 
 [build]
   command = "bun run build"

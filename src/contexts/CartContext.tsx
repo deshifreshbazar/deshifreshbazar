@@ -33,12 +33,16 @@ interface CartItem {
   totalPrice: number;
 }
 
+type RawCartItem = Partial<CartItem> & {
+  category?: string | { name?: string } | null;
+};
+
 interface CartContextType {
   items: CartItem[];
   addItem: (product: Product, quantity: number, selectedPackage: string) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  updatePackage: (id: string, packageId: string) => void;
+  removeItem: (id: string, selectedPackage?: string) => void;
+  updateQuantity: (id: string, quantity: number, selectedPackage?: string) => void;
+  updatePackage: (id: string, packageId: string, selectedPackage?: string) => void;
   clearCart: () => void;
   getItemPrice: (item: CartItem) => number;
   getCartTotal: () => number;
@@ -53,18 +57,62 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Refactored cart load/save logic and validation
 
   // Helper to migrate/validate a single cart item
-  const migrateCartItem = (item: CartItem): CartItem => ({
-    id: typeof item?.id === 'string' ? item.id : '',
-    name: typeof item?.name === 'string' ? item.name : '',
-    description: typeof item?.description === 'string' ? item.description : '',
-    price: typeof item?.price === 'number' ? item.price : 0,
-    quantity: typeof item?.quantity === 'number' ? item.quantity : 1,
-    image: typeof item?.image === 'string' ? item.image : '',
-    category: typeof item?.category === 'string' ? item.category : '',
-    packages: Array.isArray(item?.packages) ? item.packages : [],
-    selectedPackage: typeof item?.selectedPackage === 'string' ? item.selectedPackage : '',
-    totalPrice: typeof item?.totalPrice === 'number' ? item.totalPrice : 0,
-  });
+  const migrateCartItem = (item: RawCartItem): CartItem => {
+    const migratedPackages = Array.isArray(item?.packages)
+      ? item.packages
+          .filter(
+            (pkg): pkg is Package =>
+              Boolean(pkg) &&
+              typeof pkg.id === 'string' &&
+              typeof pkg.name === 'string' &&
+              typeof pkg.price === 'number'
+          )
+          .map(pkg => ({
+            id: pkg.id,
+            name: pkg.name,
+            price: pkg.price,
+          }))
+      : [];
+
+    const selectedPackage =
+      typeof item?.selectedPackage === 'string' && item.selectedPackage
+        ? item.selectedPackage
+        : (migratedPackages[0]?.id ?? '');
+
+    const resolvedPrice =
+      migratedPackages.find(pkg => pkg.id === selectedPackage)?.price ??
+      (typeof item?.price === 'number' ? item.price : 0);
+
+    const quantity =
+      typeof item?.quantity === 'number' && Number.isFinite(item.quantity) && item.quantity > 0
+        ? Math.floor(item.quantity)
+        : 1;
+
+    const normalizedCategory =
+      typeof item?.category === 'string'
+        ? item.category
+        : (
+            item?.category &&
+            typeof item.category === 'object' &&
+            'name' in item.category &&
+            typeof (item.category as { name?: unknown }).name === 'string'
+          )
+          ? ((item.category as { name: string }).name)
+          : '';
+
+    return {
+      id: typeof item?.id === 'string' ? item.id : '',
+      name: typeof item?.name === 'string' ? item.name : '',
+      description: typeof item?.description === 'string' ? item.description : '',
+      price: typeof item?.price === 'number' ? item.price : 0,
+      quantity,
+      image: typeof item?.image === 'string' ? item.image : '',
+      category: normalizedCategory,
+      packages: migratedPackages,
+      selectedPackage,
+      totalPrice: resolvedPrice * quantity,
+    };
+  };
 
   // Validate a cart item
   const validateCartItem = (item: CartItem): item is CartItem => (
@@ -77,6 +125,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     typeof item.image === 'string' &&
     typeof item.category === 'string' &&
     Array.isArray(item.packages) &&
+    item.packages.every(
+      pkg =>
+        pkg &&
+        typeof pkg.id === 'string' &&
+        typeof pkg.name === 'string' &&
+        typeof pkg.price === 'number'
+    ) &&
     typeof item.selectedPackage === 'string' &&
     typeof item.totalPrice === 'number'
   );
@@ -162,16 +217,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const removeItem = (id: string) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== id));
+  const removeItem = (id: string, selectedPackage?: string) => {
+    setItems(currentItems =>
+      currentItems.filter(
+        item => !(item.id === id && (selectedPackage ? item.selectedPackage === selectedPackage : true))
+      )
+    );
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number, selectedPackage?: string) => {
     if (quantity < 1) return;
     
     setItems(currentItems =>
       currentItems.map(item => {
-        if (item.id === id) {
+        const matchesItem = item.id === id && (selectedPackage ? item.selectedPackage === selectedPackage : true);
+        if (matchesItem) {
           const newTotalPrice = getItemPrice(item) * quantity;
           return { ...item, quantity, totalPrice: newTotalPrice };
         }
@@ -180,10 +240,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const updatePackage = (id: string, packageId: string) => {
+  const updatePackage = (id: string, packageId: string, selectedPackage?: string) => {
     setItems(currentItems =>
       currentItems.map(item => {
-        if (item.id === id) {
+        const matchesItem = item.id === id && (selectedPackage ? item.selectedPackage === selectedPackage : true);
+        if (matchesItem) {
           const newPrice = getItemPrice({ ...item, selectedPackage: packageId });
           const newTotalPrice = newPrice * item.quantity;
           return { ...item, selectedPackage: packageId, totalPrice: newTotalPrice };

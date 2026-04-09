@@ -86,7 +86,7 @@ export default function CartPage() {
                               {item.packages.map(pkg => (
                                 <button
                                   key={pkg.id}
-                                  onClick={() => updatePackage(item.id, pkg.id)}
+                                  onClick={() => updatePackage(item.id, pkg.id, item.selectedPackage)}
                                   className={`w-full px-4 py-2 rounded-lg border text-left ${
                                     item.selectedPackage === pkg.id 
                                       ? 'border-green-700 bg-green-50 text-green-700' 
@@ -103,7 +103,7 @@ export default function CartPage() {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedPackage)}
                                 className="h-8 w-8 rounded-l-md rounded-r-none"
                                 disabled={item.quantity <= 1}
                               >
@@ -115,7 +115,7 @@ export default function CartPage() {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedPackage)}
                                 className="h-8 w-8 rounded-l-none rounded-r-md"
                               >
                                 +
@@ -124,7 +124,7 @@ export default function CartPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => removeItem(item.id, item.selectedPackage)}
                               className="h-8 w-8 text-red-500 hover:bg-red-50"
                               title="Remove item"
                             >

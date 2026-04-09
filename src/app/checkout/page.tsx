@@ -48,7 +48,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("SSLCommerz");
   const [loading, setLoading] = useState(false);
-  const { items, getCartTotal, getItemPrice } = useCart();
+  const { items, getCartTotal, getItemPrice, clearCart } = useCart();
   const [agreed, setAgreed] = useState(false);
 
   const form = useForm<OrderFormData>({
@@ -114,9 +114,7 @@ export default function CheckoutPage() {
 
       const order = await response.json();
       
-      // Clear cart after successful order
-      // You'll need to implement this in your CartContext
-      // clearCart();
+      clearCart();
 
       // Redirect to success page with order ID
       const queryParams = new URLSearchParams({

@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import banner1 from "@/assets/images/deshi-fresh-bazar.png"
-import banner2 from "@/assets/images/v1.jpg"
 
 interface SlideData {
   id: number
@@ -14,11 +12,11 @@ interface SlideData {
 const slides: SlideData[] = [
   {
     id: 1,
-    image: banner1.src,
+    image: "https://jftgaryiaxgadhuwiiys.supabase.co/storage/v1/object/public/Banner/deshi-fresh-bazar.png",
   },
   {
     id: 2,
-    image: banner2.src,
+    image: "https://jftgaryiaxgadhuwiiys.supabase.co/storage/v1/object/public/Banner/v1.jpg",
   },
 ]
 
