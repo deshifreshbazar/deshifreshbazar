@@ -16,6 +16,7 @@ import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import HeroSlider from "@/components/HeroSlider";
 import YouTubeVideo from "@/components/YouTubeVideo";
 import { useUser } from "@/contexts/UserContext";
+import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/components/ui/toast";
 
 import garden from "@/assets/images/farmar.jpg";
@@ -36,10 +37,14 @@ type Product = {
   id: string;
   name: string;
   description: string;
+  details?: string;
   price: number;
   image: string;
   rating?: number;
   discount?: number;
+  stock: number;
+  packages: Array<{ id: string; name: string; price: number }>;
+  category: string | { id?: string; name?: string; slug?: string };
   sequence: number;
 };
 
@@ -187,6 +192,7 @@ function HomePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUser();
+  const { addItem, items: cartItems } = useCart();
   const { success: showSuccess, error: showError } = useToast();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -304,6 +310,46 @@ function HomePageInner() {
     handleGoogleCallback();
   }, [searchParams, setUser, showSuccess, showError, router]);
 
+  const handleBuyNow = useCallback(
+    (product: Product) => {
+      if (product.stock <= 0) {
+        showError("This product is currently out of stock");
+        return;
+      }
+
+      const selectedPackageId = product.packages?.[0]?.id ?? "";
+      const existingCartItem = cartItems.find(
+        (item) =>
+          item.id === product.id && item.selectedPackage === selectedPackageId,
+      );
+
+      if (!existingCartItem) {
+        addItem(
+          {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            details: product.details ?? "",
+            price: product.price,
+            image: product.image,
+            packages: product.packages ?? [],
+            category:
+              typeof product.category === "string"
+                ? product.category
+                : product.category?.name ?? "",
+            inStock: product.stock > 0,
+          },
+          1,
+          selectedPackageId,
+        );
+        showSuccess("Added to cart successfully");
+      }
+
+      router.push("/cart");
+    },
+    [addItem, cartItems, router, showError, showSuccess],
+  );
+
 
   if (loading) {
     return (
@@ -389,12 +435,14 @@ function HomePageInner() {
                   <ProductSkeleton key={i} />
                 ))
               : featuredProducts.map((product) => (
-                  <Link
+                  <Card
                     key={product.id}
-                    href={`/product/${product.id}`}
-                    className="block focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-lg"
+                    className="overflow-hidden h-full border-0 shadow-md hover:shadow-xl transition-all duration-300"
                   >
-                    <Card className="overflow-hidden h-full border-0 shadow-md hover:shadow-xl transition-all duration-300">
+                    <Link
+                      href={`/product/${product.id}`}
+                      className="block focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-lg"
+                    >
                       <div className="relative aspect-square overflow-hidden">
                         <Image
                           src={product.image || "/placeholder.svg"}
@@ -405,57 +453,65 @@ function HomePageInner() {
                           loading="lazy"
                         />
                       </div>
-                      <CardContent className="p-3 sm:p-4">
-                        <div className="block sm:hidden">
-                          <h3 className="font-medium text-sm mb-1 line-clamp-1">
-                            {product.name}
-                          </h3>
-                          <p className="text-gray-600 text-xs mb-1.5 line-clamp-2">
-                            {product.description}
-                          </p>
-                          <p className="text-green-700 font-medium text-sm">
-                            ৳ {product.price}
-                          </p>
+                    </Link>
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="block sm:hidden">
+                        <h3 className="font-medium text-sm mb-1 line-clamp-1">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-600 text-xs mb-1.5 line-clamp-2">
+                          {product.description}
+                        </p>
+                        <p className="text-green-700 font-medium text-sm">
+                          ৳ {product.price}
+                        </p>
+                      </div>
+                      <div className="hidden sm:block">
+                        <div className="flex items-center gap-1 mb-2">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < (product.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+                            />
+                          ))}
+                          <span className="text-sm text-gray-500 ml-1">
+                            ({product.rating || 5}.0)
+                          </span>
                         </div>
-                        <div className="hidden sm:block">
-                          <div className="flex items-center gap-1 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${i < (product.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                              />
-                            ))}
-                            <span className="text-sm text-gray-500 ml-1">
-                              ({product.rating || 5}.0)
+                        <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
+                          <Link href={`/product/${product.id}`}>{product.name}</Link>
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                          {product.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {product.discount && (
+                              <span className="text-sm text-gray-400 line-through">
+                                ৳
+                                {Math.round(
+                                  product.price *
+                                    (1 + product.discount / 100),
+                                )}
+                              </span>
+                            )}
+                            <span className="text-lg font-bold text-green-600">
+                              ৳{product.price}
                             </span>
                           </div>
-                          <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
-                            {product.name}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                            {product.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              {product.discount && (
-                                <span className="text-sm text-gray-400 line-through">
-                                  ৳
-                                  {Math.round(
-                                    product.price *
-                                      (1 + product.discount / 100),
-                                  )}
-                                </span>
-                              )}
-                              <span className="text-lg font-bold text-green-600">
-                                ৳{product.price}
-                              </span>
-                            </div>
-                            <ArrowRight className="w-5 h-5 text-green-500 transform group-hover:translate-x-1 transition-transform" />
-                          </div>
+                          <ArrowRight className="w-5 h-5 text-green-500 transform group-hover:translate-x-1 transition-transform" />
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                      </div>
+                      <Button
+                        type="button"
+                        className="mt-3 w-full bg-green-700 hover:bg-green-800 text-xs sm:text-sm"
+                        onClick={() => handleBuyNow(product)}
+                        disabled={product.stock <= 0}
+                      >
+                        {product.stock > 0 ? "Buy Now" : "Out of Stock"}
+                      </Button>
+                    </CardContent>
+                  </Card>
                 ))}
           </div>
 
