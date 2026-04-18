@@ -1,16 +1,38 @@
-export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import RootLayout from "@/components/layout/RootLayout";
 import ProductClient from "./ProductClient";
 import { prisma } from '@/lib/prisma';
 
+export const revalidate = 300;
+
 async function getProduct(id: string) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
-      include: {
-        packages: true,
-        category: true
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        details: true,
+        price: true,
+        image: true,
+        stock: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        packages: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            productId: true,
+          },
+        },
       }
     });
     return product;
@@ -33,9 +55,30 @@ async function getRelatedProducts(categoryId: string, currentProductId: string) 
         createdAt: 'desc'
       },
       take: 4,
-      include: {
-        packages: true,
-        category: true
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        details: true,
+        price: true,
+        image: true,
+        stock: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        packages: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            productId: true,
+          },
+        },
       }
     });
     return products;

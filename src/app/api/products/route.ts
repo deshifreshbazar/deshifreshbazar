@@ -1,28 +1,38 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
-      include: {
-        packages: true,
-        category: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        details: true,
+        price: true,
+        image: true,
+        stock: true,
+        sequence: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        packages: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
+        sequence: 'asc'
       }
     });
-
-    // Sort by sequence in memory
-    const sortedProducts = [...products].sort((a, b) => {
-      // Type assertion since we know sequence exists in the database
-      return ((a as unknown as { sequence: number }).sequence || 0) - 
-             ((b as unknown as { sequence: number }).sequence || 0);
-    });
-
-    return NextResponse.json(sortedProducts);
+    return NextResponse.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

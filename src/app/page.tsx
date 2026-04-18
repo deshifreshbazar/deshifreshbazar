@@ -256,6 +256,12 @@ function HomePageInner() {
     fetchProducts();
   }, [fetchProducts]);
 
+  useEffect(() => {
+    featuredProducts.forEach((item) => {
+      router.prefetch(`/product/${item.id}`);
+    });
+  }, [featuredProducts, router]);
+
   // Handle Google Auth callback if user lands on homepage after authentication
   useEffect(() => {
     const handleGoogleCallback = async () => {
@@ -437,11 +443,12 @@ function HomePageInner() {
               : featuredProducts.map((product) => (
                   <Card
                     key={product.id}
-                    className="overflow-hidden h-full border-0 shadow-md hover:shadow-xl transition-all duration-300"
+                    className="overflow-hidden h-full border border-gray-200 bg-white shadow-sm hover:shadow-xl hover:border-green-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2 transition-all duration-300"
                   >
                     <Link
                       href={`/product/${product.id}`}
-                      className="block focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-lg"
+                      prefetch
+                      className="block focus:outline-none"
                     >
                       <div className="relative aspect-square overflow-hidden">
                         <Image
@@ -479,7 +486,13 @@ function HomePageInner() {
                           </span>
                         </div>
                         <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
-                          <Link href={`/product/${product.id}`}>{product.name}</Link>
+                          <Link
+                            href={`/product/${product.id}`}
+                            prefetch
+                            className="focus:outline-none"
+                          >
+                            {product.name}
+                          </Link>
                         </h3>
                         <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                           {product.description}

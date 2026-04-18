@@ -43,8 +43,9 @@ export default function ProductClient({ product, products }: ProductClientProps)
   const { addItem, items: cartItems } = useCart();
   const router = useRouter();
 
-  // Initialize with null, will update after product check
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(
+    () => product?.packages[0] ?? null
+  );
 
   if (!product) {
     return (
@@ -58,11 +59,7 @@ export default function ProductClient({ product, products }: ProductClientProps)
     );
   }
 
-  // Update selectedPackage if product has packages and selectedPackage is null
   const hasPackages = product.packages.length > 0;
-  if (hasPackages && !selectedPackage) {
-    setSelectedPackage(product.packages[0]);
-  }
 
   const handleAddToCart = () => {
     if (product.stock <= 0) {
