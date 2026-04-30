@@ -30,7 +30,7 @@ export function BottomMenuBar({ mode = 'storefront' }: BottomMenuBarProps) {
 
   if (mode === 'admin') {
     return (
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t bg-white md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-14 items-center justify-around border-t bg-white md:hidden">
         {adminItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
@@ -52,7 +52,7 @@ export function BottomMenuBar({ mode = 'storefront' }: BottomMenuBarProps) {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 shadow-[0_-6px_20px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
-      <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
+      <div className="mx-auto flex h-14 max-w-md items-center justify-around px-4">
         {storefrontItems.map((item) => {
           const Icon = item.icon;
           const isSearch = item.key === 'search';
@@ -67,19 +67,19 @@ export function BottomMenuBar({ mode = 'storefront' }: BottomMenuBarProps) {
               key={item.key}
               type="button"
               onClick={() => router.push(item.path)}
-              className={`relative flex min-w-[72px] flex-col items-center justify-center gap-1 ${
+              className={`relative flex min-w-[72px] flex-col items-center justify-center gap-0.5 ${
                 isActive ? 'text-green-700' : 'text-gray-500'
               }`}
             >
               <span
-                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                   isActive ? 'bg-green-50' : 'bg-transparent'
                 }`}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-[18px] w-[18px]" />
               </span>
               {isCart && cartCount > 0 && (
-                <span className="absolute right-4 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-700 px-1 text-[10px] font-semibold text-white">
+                <span className="absolute right-4 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-green-700 px-1 text-[9px] font-semibold text-white">
                   {cartCount}
                 </span>
               )}
