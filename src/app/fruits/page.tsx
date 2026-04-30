@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, memo, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
@@ -31,7 +31,7 @@ const ProductSkeleton = memo(function ProductSkeleton() {
   );
 });
 
-export default function FruitsPage() {
+function FruitsPageContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +117,7 @@ export default function FruitsPage() {
                   className="text-gray-400 transition-colors hover:text-gray-600"
                   aria-label="Clear search"
                 >
-                  {/* <X className="h-4 w-4" /> */}
+                  <X className="h-4 w-4" />
                 </button>
               )}
             </div>
@@ -186,5 +186,13 @@ export default function FruitsPage() {
         </div>
       </div>
     </RootLayout>
+  );
+}
+
+export default function FruitsPage() {
+  return (
+    <Suspense fallback={null}>
+      <FruitsPageContent />
+    </Suspense>
   );
 }
