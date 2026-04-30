@@ -23,7 +23,6 @@ import garden from "@/assets/images/farmar.jpg";
 import product from "@/assets/images/gobindovog-mango.jpg";
 import packaging from "@/assets/images/gopalvog.jpg";
 import delivery from "@/assets/images/mango-delivary.jpeg";
-import brandLogo from "@/assets/images/fresh-bazar.jpg";
 
 type Feature = {
   id: string;
@@ -355,25 +354,6 @@ function HomePageInner() {
     },
     [addItem, cartItems, router, showError, showSuccess],
   );
-
-
-  if (loading) {
-    return (
-      <RootLayout>
-        <div className="flex items-center justify-center min-h-screen bg-white">
-          <div className="relative w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] animate-pulse">
-            <Image
-              src={brandLogo || "/placeholder.svg"}
-              alt="Fresh Bazar Loading"
-              fill
-              className="object-contain animate-bounce"
-              priority
-            />
-          </div>
-        </div>
-      </RootLayout>
-    );
-  }
 
   return (
     <RootLayout>
