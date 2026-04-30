@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star, Truck, Shield, Award, Phone } from "lucide-react";
 import { FaFacebookMessenger } from "react-icons/fa";
-import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense, memo } from "react";
 import HeroSlider from "@/components/HeroSlider";
 import YouTubeVideo from "@/components/YouTubeVideo";
 import { useUser } from "@/contexts/UserContext";
@@ -175,17 +175,17 @@ const ProductCard = ({ product }: { product: Product }) => (
   </Link>
 );
 
-// Loading skeleton component
-const ProductSkeleton = () => (
-  <Card className="overflow-hidden h-full animate-pulse">
-    <div className="aspect-square bg-gray-200" />
-    <CardContent className="p-4">
-      <div className="h-4 bg-gray-200 rounded mb-2" />
-      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-      <div className="h-3 bg-gray-200 rounded w-1/2" />
-    </CardContent>
-  </Card>
-);
+// Keep loading placeholders lightweight to reduce work before data arrives.
+const ProductSkeleton = memo(() => (
+  <div className="h-full border border-gray-100 rounded-lg p-3">
+    <div className="aspect-square rounded-md bg-gray-100" />
+    <div className="mt-3 h-3 w-5/6 rounded bg-gray-100" />
+    <div className="mt-2 h-3 w-3/5 rounded bg-gray-100" />
+    <div className="mt-3 h-7 w-full rounded bg-gray-100" />
+  </div>
+));
+
+ProductSkeleton.displayName = "ProductSkeleton";
 
 function HomePageInner() {
   const router = useRouter();
@@ -234,6 +234,7 @@ function HomePageInner() {
     ],
     [],
   );
+  const skeletonItems = useMemo(() => [0, 1, 2, 3], []);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -417,7 +418,7 @@ function HomePageInner() {
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-12">
             {loading
-              ? Array.from({ length: 8 }).map((_, i) => (
+              ? skeletonItems.map((i) => (
                   <ProductSkeleton key={i} />
                 ))
               : featuredProducts.map((product) => (

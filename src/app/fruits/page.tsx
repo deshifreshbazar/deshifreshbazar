@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import RootLayout from "@/components/layout/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader } from "@/components/ui/loader";
 
 interface Product {
   id: string;
@@ -19,10 +18,22 @@ interface Product {
   };
 }
 
+const ProductSkeleton = memo(function ProductSkeleton() {
+  return (
+    <div className="h-full rounded-lg border border-gray-100 bg-white p-3">
+      <div className="aspect-square rounded-md bg-gray-100" />
+      <div className="mt-3 h-4 w-4/5 rounded bg-gray-100" />
+      <div className="mt-2 h-3 w-2/3 rounded bg-gray-100" />
+      <div className="mt-4 h-8 w-full rounded bg-gray-100" />
+    </div>
+  );
+});
+
 export default function FruitsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const skeletonItems = useMemo(() => [0, 1, 2, 3], []);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -40,15 +51,10 @@ export default function FruitsPage() {
     fetchProducts();
   }, []);
 
-  if (loading) {
-    return (
-      <RootLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader size="lg" />
-        </div>
-      </RootLayout>
-    );
-  }
+  const categories = useMemo(
+    () => Array.from(new Set(products.map((product) => product.category.name))),
+    [products],
+  );
 
   if (error) {
     return (
@@ -60,10 +66,6 @@ export default function FruitsPage() {
       </RootLayout>
     );
   }
-
-  const categories = Array.from(
-    new Set(products.map((product) => product.category.name))
-  );
 
   return (
     <RootLayout>
@@ -89,31 +91,38 @@ export default function FruitsPage() {
 
           {/* Products grid */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
-                <div className="aspect-square overflow-hidden">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={600}
-                    height={600}
-                    className="h-full w-full object-cover transition-transform hover:scale-105"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.description}</p>
-                  <div className="mt-2 flex justify-between items-center">
-                    <p className="font-medium text-green-700">৳ {product.price}</p>
-                    <Button asChild size="sm" className="bg-green-700 hover:bg-green-800">
-                      <Link href={`/product/${product.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {loading
+              ? skeletonItems.map((item) => <ProductSkeleton key={item} />)
+              : products.map((product) => (
+                  <Card key={product.id} className="overflow-hidden">
+                    <div className="aspect-square overflow-hidden">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={600}
+                        height={600}
+                        className="h-full w-full object-cover transition-transform hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold">{product.name}</h3>
+                      <p className="text-sm text-muted-foreground">{product.description}</p>
+                      <div className="mt-2 flex items-center justify-between">
+                        <p className="font-medium text-green-700">৳ {product.price}</p>
+                        <Button
+                          asChild
+                          size="sm"
+                          className="bg-green-700 hover:bg-green-800"
+                        >
+                          <Link href={`/product/${product.id}`}>
+                            View Details
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
           </div>
         </div>
       </div>
