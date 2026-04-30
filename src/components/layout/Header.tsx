@@ -40,15 +40,15 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
+      <div className="container relative flex h-20 items-center justify-between md:h-16">
+        <div className="hidden items-center gap-6 md:flex">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src={logo}
               alt="Deshi Fresh Bazar"
               width={80}
               height={15}
-              className="h-[40px] w-auto xs:h-[45px] sm:h-[50px] md:h-[55px] lg:h-[60px] xl:h-[65px] 2xl:h-[70px] transition-all duration-200"
+              className="h-[55px] w-auto transition-all duration-200 lg:h-[60px] xl:h-[65px] 2xl:h-[70px]"
               priority
               quality={100}
             />
@@ -65,15 +65,23 @@ export default function Header() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/cart" className="sm:hidden relative mr-2">
-            <ShoppingCart className="h-5 w-5" />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-700 text-xs text-white">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+
+        <Link
+          href="/"
+          className="absolute left-1/2 flex -translate-x-1/2 items-center md:hidden"
+        >
+          <Image
+            src={logo}
+            alt="Deshi Fresh Bazar"
+            width={120}
+            height={24}
+            className="h-[58px] w-auto transition-all duration-200"
+            priority
+            quality={100}
+          />
+        </Link>
+
+        <div className="ml-auto flex items-center gap-4">
           <Link href="/cart" className="hidden sm:flex items-center gap-2 relative">
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (

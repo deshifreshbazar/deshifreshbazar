@@ -89,11 +89,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
           </div>
         </aside>
-        <main className="flex-1 bg-[#f9fafb] min-h-screen p-0 md:ml-64 md:p-8 overflow-x-auto">
+        <main className="flex-1 bg-[#f9fafb] min-h-screen overflow-x-auto p-0 pb-20 md:ml-64 md:p-8">
           {children}
         </main>
       </div>
-      <BottomMenuBar />
+      <BottomMenuBar mode="admin" />
     </div>
   );
 }
