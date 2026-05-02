@@ -375,6 +375,10 @@ export default function CheckoutPage() {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>৳ {calculateSubtotal()}</span>
                     </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground ">ডেলিভারি চার্জ </span>
+                        <span>৳0</span>
+                      </div>
                     {/* <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
                       <span>

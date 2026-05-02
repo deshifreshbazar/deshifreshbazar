@@ -18,7 +18,7 @@ export default function ContactPage() {
 
                         <h2 className="mt-8 text-xl font-semibold">যোগাযোগের মাধ্যম</h2>
                         <ul className="list-disc pl-6">
-                            <li>ফোন: ০১৭১২ ৩৪৫৬৭৮</li>
+                            <li>ফোন: 01560001192</li>
                             <li>হটলাইন: ১৬২৪৭</li>
                             <li>ইমেইল: info@deshifreshbazar.com</li>
                             <li>ওয়েবসাইট: www.deshifreshbazar.com</li>

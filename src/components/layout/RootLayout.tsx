@@ -13,7 +13,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 pb-20 md:pb-0">{children}</main>
+      <main className="flex-1 pb-16 md:pb-0">{children}</main>
       <Footer />
       <BottomMenuBar />
     </div>

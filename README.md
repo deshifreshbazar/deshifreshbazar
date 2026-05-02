@@ -206,7 +206,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 * Website: [www.deshifreshbazar.com](https://www.deshifreshbazar.com)
 * Email: [deshifreshbazar@gmail.com](mailto:deshifreshbazar@gmail.com)
-* Phone: 01782285171
+* Phone: 01560001192
 
 ## 🙏 Acknowledgments
 

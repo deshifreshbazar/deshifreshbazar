@@ -41,6 +41,43 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container relative flex h-20 items-center justify-between md:h-16">
+        
+        {/* Mobile Menu (Left) */}
+        <div className="flex items-center md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="-ml-2">
+                <Menu className="h-10 w-10" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <nav className="flex flex-col gap-4 mt-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    href={link.path}
+                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.title}
+                  </Link>
+                ))}
+                <Link
+                  href="/cart"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground w-fit relative mt-2"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-3 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-green-700 text-[10px] font-bold text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                  <span>Cart</span>
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <div className="hidden items-center gap-6 md:flex">
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -81,29 +118,29 @@ export default function Header() {
           />
         </Link>
 
-        <div className="ml-auto flex items-center gap-4">
-          <Link href="/cart" className="hidden sm:flex items-center gap-2 relative">
+        <div className="flex items-center gap-3 md:gap-4">
+          <Link href="/cart" className="hidden md:flex items-center gap-2 relative">
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -top-4 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-700 text-xs text-white">
+              <span className="absolute -top-3 -right-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-green-700 text-[10px] font-bold text-white md:-top-4 md:h-5 md:w-5 md:text-xs">
                 {cartCount}
               </span>
             )}
-            <span className="text-sm font-medium">Cart</span>
+            <span className="hidden text-sm font-medium sm:inline-block">Cart</span>
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hidden sm:flex">
+              <Button variant="ghost" size="icon" className="flex">
                 {user?.image ? (
                   <Image
                     src={user.image}
                     alt="Profile"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
+                    width={36}
+                    height={36}
+                    className="rounded-full h-8 w-8 md:h-9 md:w-9"
                   />
                 ) : (
-                  <User className="h-5 w-5" />
+                  <User className="h-8 w-8 md:h-6 md:w-6" />
                 )}
               </Button>
             </DropdownMenuTrigger>
@@ -139,82 +176,6 @@ export default function Header() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <nav className="flex flex-col gap-4 mt-6">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    href={link.path}
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.title}
-                  </Link>
-                ))}
-                <Link
-                  href="/cart"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground relative"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-green-700 text-xs text-white">
-                      {cartCount}
-                    </span>
-                  )}
-                  <span>Cart</span>
-                </Link>
-                {user ? (
-                  <>
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-                    >
-                      {user?.image ? (
-                        <Image
-                          src={user.image}
-                          alt="Profile"
-                          width={20}
-                          height={20}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <User className="h-4 w-4" />
-                      )}
-                      <span>Profile</span>
-                    </Link>
-                    <Link
-                      href="/orders"
-                      className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-                    >
-                      <span>My Orders</span>
-                    </Link>
-                    <button
-                      onClick={() => {
-                        void handleLogout();
-                      }}
-                      className="flex items-center gap-2 text-sm font-medium text-red-600"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Logout</span>
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Login</span>
-                  </Link>
-                )}
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
     </header>

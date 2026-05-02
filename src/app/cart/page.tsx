@@ -9,15 +9,15 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useCart } from '@/contexts/CartContext';
 
 export default function CartPage() {
-  const { 
-    items, 
-    updateQuantity, 
-    updatePackage, 
-    removeItem, 
+  const {
+    items,
+    updateQuantity,
+    updatePackage,
+    removeItem,
     getItemPrice,
     getCartTotal,
     getCartCount,
-    clearCart 
+    clearCart
   } = useCart();
 
   // const calculateShipping = () => {
@@ -37,8 +37,8 @@ export default function CartPage() {
           <div className="mb-8 flex items-center justify-between">
             <h1 className="text-3xl font-bold">Shopping Cart</h1>
             {items.length > 0 && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={clearCart}
                 className="text-red-500 hover:bg-red-50 hover:text-red-600"
               >
@@ -87,11 +87,10 @@ export default function CartPage() {
                                 <button
                                   key={pkg.id}
                                   onClick={() => updatePackage(item.id, pkg.id, item.selectedPackage)}
-                                  className={`w-full px-4 py-2 rounded-lg border text-left ${
-                                    item.selectedPackage === pkg.id 
-                                      ? 'border-green-700 bg-green-50 text-green-700' 
+                                  className={`w-full px-4 py-2 rounded-lg border text-left ${item.selectedPackage === pkg.id
+                                      ? 'border-green-700 bg-green-50 text-green-700'
                                       : 'border-gray-200 hover:border-green-700 hover:bg-green-50'
-                                  }`}
+                                    }`}
                                 >
                                   {pkg.name} (৳ {pkg.price})
                                 </button>
@@ -153,6 +152,11 @@ export default function CartPage() {
                         <span className="text-muted-foreground">Subtotal</span>
                         <span>৳{getCartTotal()}</span>
                       </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground "> ডেলিভারি চার্জ </span>
+                        <span>৳0</span>
+                      </div>
+
                       {/* <div className="flex justify-between">
                         <span className="text-muted-foreground">Shipping</span>
                         <span>

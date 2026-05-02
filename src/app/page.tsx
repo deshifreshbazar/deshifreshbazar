@@ -411,7 +411,7 @@ function HomePageInner() {
               আমাদের পণ্য
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              তাজা ফলের সংগ্রহ
+              স্বাস্থ্যকর ফ্রেশ ফল
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full" />
           </div>
