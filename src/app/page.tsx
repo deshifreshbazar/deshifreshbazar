@@ -532,11 +532,10 @@ function HomePageInner() {
               আমাদের বিশেষত্ব
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              আমরা কেন আলাদা?
+              আমাদের বিশেষত্ব কোথায়?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              আমাদের ভিন্নধর্মী পদ্ধতি ও নিরবচ্ছিন্ন প্রতিশ্রুতি—এটাই আমাদেরকে
-              অন্যদের থেকে আলাদা করে তোলে।
+             গ্রাহকের সন্তুষ্টি, প্রিমিয়াম মান এবং দ্রুত সেবার মাধ্যমে আমরা গড়ে তুলেছি আস্থার এক নতুন ঠিকানা।
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full" />
           </div>
