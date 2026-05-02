@@ -57,7 +57,7 @@ export default function HeroSlider() {
 
   return (
     <section
-      className="relative h-[300px] sm:h-[60vh] lg:h-[70vh] xl:h-[80vh] overflow-hidden"
+      className="relative w-full aspect-[16/9] sm:aspect-auto sm:h-[60vh] lg:h-[70vh] xl:h-[80vh] overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       role="banner"
@@ -77,7 +77,7 @@ export default function HeroSlider() {
                 src={slide.image || "/placeholder.svg"}
                 alt="Slider image"
                 fill
-                className="object-contain sm:object-cover"
+                className="object-cover"
                 priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
                 onLoad={() => handleImageLoad(index)}
