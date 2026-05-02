@@ -69,7 +69,7 @@ const MobileFeatureCarousel = ({ features }: { features: Feature[] }) => {
               isActive
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 translate-x-full"
-            }`}
+              }`}
           >
             <div className="flex flex-col items-center justify-center h-full p-6 text-center">
               <div className="mb-6 relative">
@@ -107,7 +107,7 @@ const MobileFeatureCarousel = ({ features }: { features: Feature[] }) => {
             onClick={() => setCurrent(idx)}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
               idx === current ? "bg-green-500 w-6" : "bg-gray-300"
-            }`}
+              }`}
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}
@@ -401,112 +401,113 @@ function HomePageInner() {
       </div>
 
       {/* Featured Products Section */}
-      <section className="py-5 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
+      <section className="py-2 md:py-5 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-2 md:px-4">
+          {/* product introduction */}
+          <div className="text-center mb-4 md:mb-8">
             <Badge
               variant="outline"
-              className="mb-4 text-green-600 border-green-200"
+              className="mb-2 md:mb-4 text-green-600 border-green-200"
             >
               আমাদের পণ্য
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2 md:mb-4">
               স্বাস্থ্যকর ফ্রেশ ফল
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full" />
+            <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-3 md:mt-6 rounded-full" />
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-12">
+          {/* product introduction end */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 mb-6 sm:mb-12">
             {loading
               ? skeletonItems.map((i) => (
-                  <ProductSkeleton key={i} />
-                ))
+                <ProductSkeleton key={i} />
+              ))
               : featuredProducts.map((product) => (
-                  <Card
-                    key={product.id}
-                    className="overflow-hidden h-full border border-gray-200 bg-white shadow-sm hover:shadow-xl hover:border-green-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2 transition-all duration-300"
+                <Card
+                  key={product.id}
+                  className="overflow-hidden h-full border border-gray-200 bg-white shadow-sm hover:shadow-xl hover:border-green-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2 transition-all duration-300"
+                >
+                  <Link
+                    href={`/product/${product.id}`}
+                    prefetch
+                    className="block focus:outline-none"
                   >
-                    <Link
-                      href={`/product/${product.id}`}
-                      prefetch
-                      className="block focus:outline-none"
-                    >
-                      <div className="relative aspect-square overflow-hidden">
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          width={400}
-                          height={400}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
+                    <div className="relative aspect-square overflow-hidden">
+                      <Image
+                        src={product.image || "/placeholder.svg"}
+                        alt={product.name}
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  </Link>
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="block sm:hidden">
+                      <h3 className="font-medium text-sm mb-1 line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-gray-600 text-xs mb-1.5 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <p className="text-green-700 font-medium text-sm">
+                        ৳ {product.price}
+                      </p>
+                    </div>
+                    <div className="hidden sm:block">
+                      <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < (product.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+                          />
+                        ))}
+                        <span className="text-sm text-gray-500 ml-1">
+                          ({product.rating || 5}.0)
+                        </span>
                       </div>
-                    </Link>
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="block sm:hidden">
-                        <h3 className="font-medium text-sm mb-1 line-clamp-1">
+                      <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
+                        <Link
+                          href={`/product/${product.id}`}
+                          prefetch
+                          className="focus:outline-none"
+                        >
                           {product.name}
-                        </h3>
-                        <p className="text-gray-600 text-xs mb-1.5 line-clamp-2">
-                          {product.description}
-                        </p>
-                        <p className="text-green-700 font-medium text-sm">
-                          ৳ {product.price}
-                        </p>
-                      </div>
-                      <div className="hidden sm:block">
-                        <div className="flex items-center gap-1 mb-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${i < (product.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                            />
-                          ))}
-                          <span className="text-sm text-gray-500 ml-1">
-                            ({product.rating || 5}.0)
+                        </Link>
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {product.discount && (
+                            <span className="text-sm text-gray-400 line-through">
+                              ৳
+                              {Math.round(
+                                product.price *
+                                (1 + product.discount / 100),
+                              )}
+                            </span>
+                          )}
+                          <span className="text-lg font-bold text-green-600">
+                            ৳{product.price}
                           </span>
                         </div>
-                        <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
-                          <Link
-                            href={`/product/${product.id}`}
-                            prefetch
-                            className="focus:outline-none"
-                          >
-                            {product.name}
-                          </Link>
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                          {product.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {product.discount && (
-                              <span className="text-sm text-gray-400 line-through">
-                                ৳
-                                {Math.round(
-                                  product.price *
-                                    (1 + product.discount / 100),
-                                )}
-                              </span>
-                            )}
-                            <span className="text-lg font-bold text-green-600">
-                              ৳{product.price}
-                            </span>
-                          </div>
-                          <ArrowRight className="w-5 h-5 text-green-500 transform group-hover:translate-x-1 transition-transform" />
-                        </div>
+                        <ArrowRight className="w-5 h-5 text-green-500 transform group-hover:translate-x-1 transition-transform" />
                       </div>
-                      <Button
-                        type="button"
-                        className="mt-3 w-full bg-green-700 hover:bg-green-800 text-xs sm:text-sm"
-                        onClick={() => handleBuyNow(product)}
-                        disabled={product.stock <= 0}
-                      >
-                        {product.stock > 0 ? "Buy Now" : "Out of Stock"}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                    </div>
+                    <Button
+                      type="button"
+                      className="mt-3 w-full bg-green-700 hover:bg-green-800 text-xs sm:text-sm"
+                      onClick={() => handleBuyNow(product)}
+                      disabled={product.stock <= 0}
+                    >
+                      {product.stock > 0 ? "Buy Now" : "Out of Stock"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
 
           <div className="text-center">
@@ -532,10 +533,10 @@ function HomePageInner() {
               আমাদের বিশেষত্ব
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              আমাদের বিশেষত্ব কোথায়?
+              আমরাই কেন সেরা?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-             গ্রাহকের সন্তুষ্টি, প্রিমিয়াম মান এবং দ্রুত সেবার মাধ্যমে আমরা গড়ে তুলেছি আস্থার এক নতুন ঠিকানা।
+              গ্রাহকের সন্তুষ্টি, প্রিমিয়াম মান এবং দ্রুত সেবার মাধ্যমে আমরা গড়ে তুলেছি আস্থার এক নতুন ঠিকানা।
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full" />
           </div>
