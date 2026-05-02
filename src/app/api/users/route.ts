@@ -11,7 +11,47 @@ const prisma = new PrismaClient({
   },
 });
 
-// Register user
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Register a new user
+ *     description: Create a new user account.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                   description: Use this token as the BearerAuth value
+ *       400:
+ *         description: Invalid input or user already exists
+ *       500:
+ *         description: Internal server error
+ */
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
@@ -34,12 +74,55 @@ export async function POST(request: Request) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '30d' });
 
     return NextResponse.json({ id: user.id, name: user.name, email: user.email, token });
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }
 
-// Login user
+/**
+ * @swagger
+ * /api/users:
+ *   put:
+ *     summary: Login user
+ *     description: Authenticate a user and return a JWT token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                   description: Copy this JWT token and paste it into the BearerAuth value!
+ *       400:
+ *         description: Email and password required
+ *       401:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Internal server error
+ */
 export async function PUT(request: Request) {
   try {
     const { email, password } = await request.json();
@@ -81,8 +164,9 @@ export async function PUT(request: Request) {
       role: user.role, // This will be the Role enum value
       token
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Login error:', error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

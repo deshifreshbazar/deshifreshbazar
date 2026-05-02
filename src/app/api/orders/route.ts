@@ -41,6 +41,51 @@ async function getAuthenticatedUserId() {
   return session?.user?.id ?? null;
 }
 
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     summary: Create a new order
+ *     description: Create a new order for the authenticated user or guest.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               postalCode:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *               subtotal:
+ *                 type: number
+ *               shipping:
+ *                 type: number
+ *               total:
+ *                 type: number
+ *               paymentMethod:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Order created successfully
+ *       500:
+ *         description: Failed to create order
+ */
 export async function POST(request: Request) {
   try {
     const data = await request.json();
@@ -103,6 +148,22 @@ export async function POST(request: Request) {
   }
 }
 
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     summary: Get user orders
+ *     description: Retrieve all orders for the currently authenticated user.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of orders
+ *       401:
+ *         description: Not authorized
+ *       500:
+ *         description: Failed to fetch orders
+ */
 export async function GET() {
   try {
     const userId = await getAuthenticatedUserId();
