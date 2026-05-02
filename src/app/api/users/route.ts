@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -10,48 +10,6 @@ const prisma = new PrismaClient({
     },
   },
 });
-
-/**
- * @swagger
- * /api/users:
- *   post:
- *     summary: Register a new user
- *     description: Create a new user account.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 email:
- *                   type: string
- *                 token:
- *                   type: string
- *                   description: Use this token as the BearerAuth value
- *       400:
- *         description: Invalid input or user already exists
- *       500:
- *         description: Internal server error
- */
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
@@ -79,50 +37,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }
-
-/**
- * @swagger
- * /api/users:
- *   put:
- *     summary: Login user
- *     description: Authenticate a user and return a JWT token.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 email:
- *                   type: string
- *                 role:
- *                   type: string
- *                 token:
- *                   type: string
- *                   description: Copy this JWT token and paste it into the BearerAuth value!
- *       400:
- *         description: Email and password required
- *       401:
- *         description: Invalid credentials
- *       500:
- *         description: Internal server error
- */
 export async function PUT(request: Request) {
   try {
     const { email, password } = await request.json();
